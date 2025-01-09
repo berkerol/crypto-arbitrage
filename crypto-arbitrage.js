@@ -133,7 +133,7 @@ async function list (symbol) {
     a.setAttribute('rel', 'noopener noreferrer');
     a.setAttribute('href', `${WEB_TRADE_URLS[exchange]}${getWebTradeSymbol(symbol, exchange)}`);
     a.appendChild(i);
-    const td = createElement('td', exchange);
+    const td = createElement('td', `${exchange} `);
     td.appendChild(a);
     tr.appendChild(td);
     const url = `${API_ORDER_BOOK_URLS[exchange]}${getApiOrderBookSymbol(symbol, exchange)}`;
