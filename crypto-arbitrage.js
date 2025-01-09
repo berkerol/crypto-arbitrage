@@ -1,5 +1,5 @@
 /* global createElement */
-const ORDER_BOOK_URLS = {
+const API_ORDER_BOOK_URLS = {
   pionex: 'https://api.pionex.com/api/v1/market/depth?symbol=',
   binance: 'https://api.binance.com/api/v3/depth?symbol=',
   bybit: 'https://api.bybit.com/v5/market/orderbook?category=spot&symbol=',
@@ -11,7 +11,7 @@ const ORDER_BOOK_URLS = {
   coinw: 'https://api.coinw.com/api/v1/public?command=returnOrderBook&symbol='
 };
 
-const TRADE_URLS = {
+const WEB_TRADE_URLS = {
   pionex: 'https://www.pionex.com/en/trade/',
   binance: 'https://www.binance.com/en/trade/',
   bybit: 'https://www.bybit.com/en/trade/spot/',
@@ -51,23 +51,8 @@ const ASKS_PATHS = {
 };
 
 const SYMBOLS = {
-  'XAUT-USDT': {
-    // pionex pair is not available in API
-    bitget: 'XAUTUSDT',
-    htx: 'xautusdt',
-    gateio: 'XAUT_USDT',
-    bingx: 'XAUT-USDT',
-    coinw: 'XAUT_USDT'
-  },
-  'PAXG-USDT': {
-    pionex: 'PAXG_USDT',
-    binance: 'PAXGUSDT',
-    bybit: 'PAXGUSDT',
-    bitget: 'PAXGUSDT',
-    kucoin: 'PAXG-USDT',
-    bingx: 'PAXG-USDT',
-    coinw: 'PAXG_USDT'
-  }
+  'XAUT-USDT': ['bitget', 'htx', 'gateio', 'bingx', 'coinw'],
+  'PAXG-USDT': ['pionex', 'binance', 'bybit', 'bitget', 'kucoin', 'bingx', 'coinw']
 };
 
 const params = new URLSearchParams(window.location.search);
@@ -87,6 +72,34 @@ async function listAll (wait) {
     } else {
       list(s);
     }
+  }
+}
+
+function getApiOrderBookSymbol (symbol, exchange) {
+  if (exchange === 'pionex' || exchange === 'gateio' || exchange === 'coinw') {
+    return symbol.split('-').join('_');
+  } else if (exchange === 'binance' || exchange === 'bybit' || exchange === 'bitget') {
+    return symbol.split('-').join('');
+  } else if (exchange === 'kucoin' || exchange === 'bingx') {
+    return symbol;
+  } else if (exchange === 'htx') {
+    return symbol.split('-').join('').toLowerCase();
+  }
+}
+
+function getWebTradeSymbol (symbol, exchange) {
+  if (exchange === 'pionex' || exchange === 'binance' || exchange === 'gateio') {
+    return symbol.split('-').join('_');
+  } else if (exchange === 'bybit') {
+    return symbol.split('-').join('/');
+  } else if (exchange === 'bitget') {
+    return symbol.split('-').join('');
+  } else if (exchange === 'kucoin' || exchange === 'bingx') {
+    return symbol;
+  } else if (exchange === 'htx') {
+    return symbol.split('-').join('_').toLowerCase();
+  } else if (exchange === 'coinw') {
+    return symbol.split('-').join('').toLowerCase();
   }
 }
 
@@ -111,19 +124,19 @@ async function list (symbol) {
   let lowestBuyExchange = '';
   let lowestBuyPrice = 100000000;
   const symbols = SYMBOLS[symbol];
-  for (const exchange in symbols) {
+  for (const exchange of symbols) {
     const tr = document.createElement('tr');
     const i = document.createElement('i');
     i.setAttribute('class', 'fas fa-external-link-alt');
     const a = document.createElement('a');
     a.setAttribute('target', '_blank');
     a.setAttribute('rel', 'noopener noreferrer');
-    a.setAttribute('href', `${TRADE_URLS[exchange]}${symbols[exchange]}`);
+    a.setAttribute('href', `${WEB_TRADE_URLS[exchange]}${getWebTradeSymbol(symbol, exchange)}`);
     a.appendChild(i);
     const td = createElement('td', `${exchange} `);
     td.appendChild(a);
     tr.appendChild(td);
-    const url = `${ORDER_BOOK_URLS[exchange]}${symbols[exchange]}`;
+    const url = `${API_ORDER_BOOK_URLS[exchange]}${getApiOrderBookSymbol(symbol, exchange)}`;
     await window.fetch(url, { headers: { Origin: 'https://berkerol.github.io' } })
       .then(res => {
         return res.json();
