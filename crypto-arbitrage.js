@@ -1,71 +1,72 @@
+/* global createElement */
 const ORDER_BOOK_URLS = {
-  'pionex': 'https://api.pionex.com/api/v1/market/depth?symbol=',
-  'binance': 'https://api.binance.com/api/v3/depth?symbol=',
-  'bybit': 'https://api.bybit.com/v5/market/orderbook?category=spot&symbol=',
-  'bitget': 'https://api.bitget.com/api/v2/spot/market/orderbook?symbol=',
-  'kucoin': 'https://api.kucoin.com/api/v1/market/orderbook/level2_20?symbol=',
-  'htx': 'https://api.huobi.pro/market/depth?type=step0&symbol=',
-  'gateio': 'https://api.gateio.ws/api/v4/spot/order_book?currency_pair=',
-  'bingx': 'https://open-api.bingx.com/openApi/spot/v1/market/depth?symbol=',
-  'coinw': 'https://api.coinw.com/api/v1/public?command=returnOrderBook&symbol='
+  pionex: 'https://api.pionex.com/api/v1/market/depth?symbol=',
+  binance: 'https://api.binance.com/api/v3/depth?symbol=',
+  bybit: 'https://api.bybit.com/v5/market/orderbook?category=spot&symbol=',
+  bitget: 'https://api.bitget.com/api/v2/spot/market/orderbook?symbol=',
+  kucoin: 'https://api.kucoin.com/api/v1/market/orderbook/level2_20?symbol=',
+  htx: 'https://api.huobi.pro/market/depth?type=step0&symbol=',
+  gateio: 'https://api.gateio.ws/api/v4/spot/order_book?currency_pair=',
+  bingx: 'https://open-api.bingx.com/openApi/spot/v1/market/depth?symbol=',
+  coinw: 'https://api.coinw.com/api/v1/public?command=returnOrderBook&symbol='
 };
 
 const TRADE_URLS = {
-  'pionex': 'https://www.pionex.com/en/trade/',
-  'binance': 'https://www.binance.com/en/trade/',
-  'bybit': 'https://www.bybit.com/en/trade/spot/',
-  'bitget': 'https://www.bitget.com/spot/',
-  'kucoin': 'https://www.kucoin.com/trade/',
-  'htx': 'https://www.htx.com/trade/',
-  'gateio': 'https://www.gate.io/trade/',
-  'bingx': 'https://bingx.com/en/spot/',
-  'coinw': 'https://www.coinw.com/spot/'
+  pionex: 'https://www.pionex.com/en/trade/',
+  binance: 'https://www.binance.com/en/trade/',
+  bybit: 'https://www.bybit.com/en/trade/spot/',
+  bitget: 'https://www.bitget.com/spot/',
+  kucoin: 'https://www.kucoin.com/trade/',
+  htx: 'https://www.htx.com/trade/',
+  gateio: 'https://www.gate.io/trade/',
+  bingx: 'https://bingx.com/en/spot/',
+  coinw: 'https://www.coinw.com/spot/'
 };
 
 // BIDS: buyers, green, highest to lowest
 // ASKS: sellers, red, lowest to highest
 
 const BIDS_PATHS = {
-  'pionex': 'data.bids',
-  'binance': 'bids',
-  'bybit': 'result.b',
-  'bitget': 'data.bids',
-  'kucoin': 'data.bids',
-  'htx': 'tick.bids',
-  'gateio': 'bids',
-  'bingx': 'data.bids',
-  'coinw': 'data.bids'
+  pionex: 'data.bids',
+  binance: 'bids',
+  bybit: 'result.b',
+  bitget: 'data.bids',
+  kucoin: 'data.bids',
+  htx: 'tick.bids',
+  gateio: 'bids',
+  bingx: 'data.bids',
+  coinw: 'data.bids'
 };
 
 const ASKS_PATHS = {
-  'pionex': 'data.asks',
-  'binance': 'asks',
-  'bybit': 'result.a',
-  'bitget': 'data.asks',
-  'kucoin': 'data.asks',
-  'htx': 'tick.asks',
-  'gateio': 'asks',
-  'bingx': 'data.asks',
-  'coinw': 'data.asks'
+  pionex: 'data.asks',
+  binance: 'asks',
+  bybit: 'result.a',
+  bitget: 'data.asks',
+  kucoin: 'data.asks',
+  htx: 'tick.asks',
+  gateio: 'asks',
+  bingx: 'data.asks',
+  coinw: 'data.asks'
 };
 
 const SYMBOLS = {
   'XAUT-USDT': {
     // pionex pair is not available in API
-    'bitget': 'XAUTUSDT',
-    'htx': 'xautusdt',
-    'gateio': 'XAUT_USDT',
-    'bingx': 'XAUT-USDT',
-    'coinw': 'XAUT_USDT'
+    bitget: 'XAUTUSDT',
+    htx: 'xautusdt',
+    gateio: 'XAUT_USDT',
+    bingx: 'XAUT-USDT',
+    coinw: 'XAUT_USDT'
   },
   'PAXG-USDT': {
-    'pionex': 'PAXG_USDT',
-    'binance': 'PAXGUSDT',
-    'bybit': 'PAXGUSDT',
-    'bitget': 'PAXGUSDT',
-    'kucoin': 'PAXG-USDT',
-    'bingx': 'PAXG-USDT',
-    'coinw': 'PAXG_USDT'
+    pionex: 'PAXG_USDT',
+    binance: 'PAXGUSDT',
+    bybit: 'PAXGUSDT',
+    bitget: 'PAXGUSDT',
+    kucoin: 'PAXG-USDT',
+    bingx: 'PAXG-USDT',
+    coinw: 'PAXG_USDT'
   }
 };
 
