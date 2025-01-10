@@ -131,6 +131,7 @@ const EXCHANGES = {
 };
 
 const SYMBOLS = {
+  'USDE-USDT': ['bybit', 'bitget', 'kucoin', 'gateio'],
   'XAUT-USDT': ['bitget', 'htx', 'gateio', 'bingx', 'coinw'],
   'PAXG-USDT': ['pionex', 'binance', 'bybit', 'bitget', 'kucoin', 'bingx', 'coinw']
 };
