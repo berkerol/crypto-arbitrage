@@ -1,5 +1,5 @@
 /* global createElement */
-const API_ORDER_BOOK_URLS = {
+const EXCHANGE_API_ORDER_BOOK_URLS = {
   pionex: 'https://api.pionex.com/api/v1/market/depth?symbol=',
   binance: 'https://api.binance.com/api/v3/depth?symbol=',
   bybit: 'https://api.bybit.com/v5/market/orderbook?category=spot&symbol=',
@@ -11,7 +11,7 @@ const API_ORDER_BOOK_URLS = {
   coinw: 'https://api.coinw.com/api/v1/public?command=returnOrderBook&symbol='
 };
 
-const WEB_TRADE_URLS = {
+const EXCHANGE_WEB_TRADE_URLS = {
   pionex: 'https://www.pionex.com/en/trade/',
   binance: 'https://www.binance.com/en/trade/',
   bybit: 'https://www.bybit.com/en/trade/spot/',
@@ -26,7 +26,7 @@ const WEB_TRADE_URLS = {
 // BIDS: buyers, green, highest to lowest
 // ASKS: sellers, red, lowest to highest
 
-const BIDS_PATHS = {
+const EXCHANGE_API_ORDER_BOOK_BIDS_PATHS = {
   pionex: 'data.bids',
   binance: 'bids',
   bybit: 'result.b',
@@ -38,7 +38,7 @@ const BIDS_PATHS = {
   coinw: 'data.bids'
 };
 
-const ASKS_PATHS = {
+const EXCHANGE_API_ORDER_BOOK_ASKS_PATHS = {
   pionex: 'data.asks',
   binance: 'asks',
   bybit: 'result.a',
@@ -75,7 +75,7 @@ async function listAll (wait) {
   }
 }
 
-function getApiOrderBookSymbol (symbol, exchange) {
+function getExchangeApiOrderBookSymbol (symbol, exchange) {
   if (exchange === 'pionex' || exchange === 'gateio' || exchange === 'coinw') {
     return symbol.split('-').join('_');
   } else if (exchange === 'binance' || exchange === 'bybit' || exchange === 'bitget') {
@@ -87,7 +87,7 @@ function getApiOrderBookSymbol (symbol, exchange) {
   }
 }
 
-function getWebTradeSymbol (symbol, exchange) {
+function getExchangeWebTradeSymbol (symbol, exchange) {
   if (exchange === 'pionex' || exchange === 'binance' || exchange === 'gateio') {
     return symbol.split('-').join('_');
   } else if (exchange === 'bybit') {
@@ -131,24 +131,24 @@ async function list (symbol) {
     const a = document.createElement('a');
     a.setAttribute('target', '_blank');
     a.setAttribute('rel', 'noopener noreferrer');
-    a.setAttribute('href', `${WEB_TRADE_URLS[exchange]}${getWebTradeSymbol(symbol, exchange)}`);
+    a.setAttribute('href', `${EXCHANGE_WEB_TRADE_URLS[exchange]}${getExchangeWebTradeSymbol(symbol, exchange)}`);
     a.appendChild(i);
     const td = createElement('td', `${exchange} `);
     td.appendChild(a);
     tr.appendChild(td);
-    const url = `${API_ORDER_BOOK_URLS[exchange]}${getApiOrderBookSymbol(symbol, exchange)}`;
+    const url = `${EXCHANGE_API_ORDER_BOOK_URLS[exchange]}${getExchangeApiOrderBookSymbol(symbol, exchange)}`;
     await window.fetch(url, { headers: { Origin: 'https://berkerol.github.io' } })
       .then(res => {
         return res.json();
       })
       .then(res => {
-        const bids = BIDS_PATHS[exchange].split('.').reduce((obj, key) => obj && obj[key], res);
+        const bids = EXCHANGE_API_ORDER_BOOK_BIDS_PATHS[exchange].split('.').reduce((obj, key) => obj && obj[key], res);
         tr.appendChild(createElement('td', bids[0][0]));
         if (bids[0][0] > highestSellPrice) {
           highestSellExchange = exchange;
           highestSellPrice = bids[0][0];
         }
-        const asks = ASKS_PATHS[exchange].split('.').reduce((obj, key) => obj && obj[key], res);
+        const asks = EXCHANGE_API_ORDER_BOOK_ASKS_PATHS[exchange].split('.').reduce((obj, key) => obj && obj[key], res);
         tr.appendChild(createElement('td', asks[0][0]));
         if (asks[0][0] < lowestBuyPrice) {
           lowestBuyExchange = exchange;
