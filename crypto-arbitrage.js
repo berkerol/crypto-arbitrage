@@ -127,18 +127,32 @@ const EXCHANGES = {
     },
     apiOrderBookBidsPath: 'data.bids',
     apiOrderBookAsksPath: 'data.asks'
+  },
+  poloniex: {
+    faviconUrl: 'https://poloniex.com/favicon.ico',
+    displayName: 'Poloniex',
+    webTradeUrl: 'https://poloniex.com/trade/',
+    getWebTradeSymbol: function (symbol) {
+      return symbol.split('-').join('_');
+    },
+    apiOrderBookUrl: 'https://api.poloniex.com/markets/',
+    getApiOrderBookSymbol: function (symbol) {
+      return symbol.split('-').join('_') + '/orderBook';
+    },
+    apiOrderBookBidsPath: 'bids',
+    apiOrderBookAsksPath: 'asks'
   }
 };
 
 const SYMBOLS = {
   'CRO-USDT': ['pionex', 'bitget', 'kucoin', 'gateio'],
-  'OKB-USDT': ['pionex', 'gateio', 'bingx', 'coinw'],
-  'USDE-USDT': ['bybit', 'bitget', 'kucoin', 'gateio'],
-  'DAI-USDT': ['pionex', 'bybit', 'bitget', 'htx', 'gateio', 'bingx', 'coinw'],
+  'OKB-USDT': ['pionex', 'gateio', 'bingx', 'coinw', 'poloniex'],
+  'USDE-USDT': ['bybit', 'bitget', 'kucoin', 'gateio', 'poloniex'],
+  'DAI-USDT': ['pionex', 'bybit', 'bitget', 'htx', 'gateio', 'bingx', 'coinw', 'poloniex'],
   'FDUSD-USDT': ['binance', 'bitget', 'gateio', 'bingx'],
-  'USDD-USDT': ['bybit', 'kucoin', 'htx', 'gateio', 'coinw'],
+  'USDD-USDT': ['bybit', 'kucoin', 'htx', 'gateio', 'coinw', 'poloniex'],
   'PYUSD-USDT': ['bybit', 'bitget', 'kucoin', 'htx', 'gateio', 'bingx'],
-  'TUSD-USDT': ['binance', 'bybit', 'bitget', 'kucoin', 'htx', 'gateio', 'bingx'],
+  'TUSD-USDT': ['binance', 'bybit', 'bitget', 'kucoin', 'htx', 'gateio', 'bingx', 'poloniex'],
   'EURT-USDT': ['htx', 'gateio', 'bingx', 'coinw'],
   'XAUT-USDT': ['bitget', 'htx', 'gateio', 'bingx', 'coinw'],
   'PAXG-USDT': ['pionex', 'binance', 'bybit', 'bitget', 'kucoin', 'bingx', 'coinw']
@@ -170,6 +184,15 @@ function getImageHtml (exchangeDetails) {
   img.setAttribute('width', 24);
   img.setAttribute('height', 24);
   return img.outerHTML;
+}
+
+function getBidOrAsk (path, res) {
+  const bids = path.split('.').reduce((obj, key) => obj && obj[key], res);
+  let bid = bids[0];
+  if (Array.isArray(bid)) {
+    bid = bid[0];
+  }
+  return bid;
 }
 
 async function list (symbol) {
@@ -211,17 +234,17 @@ async function list (symbol) {
         return res.json();
       })
       .then(res => {
-        const bids = exchangeDetails.apiOrderBookBidsPath.split('.').reduce((obj, key) => obj && obj[key], res);
-        tr.appendChild(createElement('td', bids[0][0]));
-        if (bids[0][0] > highestSellPrice) {
+        const bid = getBidOrAsk(exchangeDetails.apiOrderBookBidsPath, res);
+        tr.appendChild(createElement('td', bid));
+        if (bid > highestSellPrice) {
           highestSellExchange = exchange;
-          highestSellPrice = bids[0][0];
+          highestSellPrice = bid;
         }
-        const asks = exchangeDetails.apiOrderBookAsksPath.split('.').reduce((obj, key) => obj && obj[key], res);
-        tr.appendChild(createElement('td', asks[0][0]));
-        if (asks[0][0] < lowestBuyPrice) {
+        const ask = getBidOrAsk(exchangeDetails.apiOrderBookAsksPath, res);
+        tr.appendChild(createElement('td', ask));
+        if (ask < lowestBuyPrice) {
           lowestBuyExchange = exchange;
-          lowestBuyPrice = asks[0][0];
+          lowestBuyPrice = ask;
         }
         tbody.appendChild(tr);
       })
