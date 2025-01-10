@@ -219,7 +219,7 @@ async function list (symbol) {
   const isArbitragePossible = highestSellPrice > lowestBuyPrice;
   const trSummary = createElement('tr', '', isArbitragePossible ? 'table-success' : 'table-danger');
   trSummary.appendChild(createElement('td', `Summary: ${isArbitragePossible ? 'possible arbitrage' : 'no arbitrage'}`));
-  trSummary.appendChild(createElement('td', `${highestSellPrice} on ${highestSellExchange}`));
-  trSummary.appendChild(createElement('td', `${lowestBuyPrice} on ${lowestBuyExchange}`));
+  trSummary.appendChild(createElement('td', `${highestSellPrice} on ${EXCHANGES[highestSellExchange].displayName}`));
+  trSummary.appendChild(createElement('td', `${lowestBuyPrice} on ${EXCHANGES[lowestBuyExchange].displayName}`));
   tbody.appendChild(trSummary);
 }
