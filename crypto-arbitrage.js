@@ -255,7 +255,7 @@ async function list (symbol) {
   }
   let tableColor = 'table-danger';
   let summary = 'Summary: No arbitrage';
-if (highestSellPrice > lowestBuyPrice) {
+  if (highestSellPrice > lowestBuyPrice) {
     const profitPercent = ((highestSellPrice - lowestBuyPrice) / lowestBuyPrice * 100).toFixed(2);
     if (+profitPercent > 0.2) {
       tableColor = 'table-success';
