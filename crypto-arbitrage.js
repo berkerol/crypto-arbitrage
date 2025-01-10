@@ -164,6 +164,14 @@ async function listAll (wait) {
   }
 }
 
+function getImageHtml (exchangeDetails) {
+  const img = document.createElement('img');
+  img.setAttribute('src', exchangeDetails.faviconUrl);
+  img.setAttribute('width', 24);
+  img.setAttribute('height', 24);
+  return img.outerHTML;
+}
+
 async function list (symbol) {
   const h2 = createElement('h2', symbol, 'd-flex justify-content-center mt-3');
   document.getElementsByClassName('container')[0].appendChild(h2);
@@ -194,11 +202,7 @@ async function list (symbol) {
     a.setAttribute('rel', 'noopener noreferrer');
     a.setAttribute('href', `${exchangeDetails.webTradeUrl}${exchangeDetails.getWebTradeSymbol(symbol)}`);
     a.appendChild(i);
-    const img = document.createElement('img');
-    img.setAttribute('src', exchangeDetails.faviconUrl);
-    img.setAttribute('width', 24);
-    img.setAttribute('height', 24);
-    const td = createElement('td', `${img.outerHTML} ${exchangeDetails.displayName} `);
+    const td = createElement('td', `${getImageHtml(exchangeDetails)} ${exchangeDetails.displayName} `);
     td.appendChild(a);
     tr.appendChild(td);
     const url = `${exchangeDetails.apiOrderBookUrl}${exchangeDetails.getApiOrderBookSymbol(symbol)}`;
@@ -228,7 +232,7 @@ async function list (symbol) {
   const isArbitragePossible = highestSellPrice > lowestBuyPrice;
   const trSummary = createElement('tr', '', isArbitragePossible ? 'table-success' : 'table-danger');
   trSummary.appendChild(createElement('td', `Summary: ${isArbitragePossible ? 'possible arbitrage' : 'no arbitrage'}`));
-  trSummary.appendChild(createElement('td', `${highestSellPrice} on ${EXCHANGES[highestSellExchange].displayName}`));
-  trSummary.appendChild(createElement('td', `${lowestBuyPrice} on ${EXCHANGES[lowestBuyExchange].displayName}`));
+  trSummary.appendChild(createElement('td', `${highestSellPrice} on ${getImageHtml(EXCHANGES[highestSellExchange])} ${EXCHANGES[highestSellExchange].displayName}`));
+  trSummary.appendChild(createElement('td', `${lowestBuyPrice} on ${getImageHtml(EXCHANGES[lowestBuyExchange])} ${EXCHANGES[lowestBuyExchange].displayName}`));
   tbody.appendChild(trSummary);
 }
