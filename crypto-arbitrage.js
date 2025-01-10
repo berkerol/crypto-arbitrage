@@ -3,6 +3,7 @@
 // ASKS: sellers, red, lowest to highest
 const EXCHANGES = {
   pionex: {
+    faviconUrl: 'https://www.pionex.com/favicon.ico',
     displayName: 'Pionex',
     webTradeUrl: 'https://www.pionex.com/en/trade/',
     getWebTradeSymbol: function (symbol) {
@@ -16,6 +17,7 @@ const EXCHANGES = {
     apiOrderBookAsksPath: 'data.asks'
   },
   binance: {
+    faviconUrl: 'https://bin.bnbstatic.com/static/images/common/favicon.ico',
     displayName: 'Binance',
     webTradeUrl: 'https://www.binance.com/en/trade/',
     getWebTradeSymbol: function (symbol) {
@@ -29,6 +31,7 @@ const EXCHANGES = {
     apiOrderBookAsksPath: 'asks'
   },
   bybit: {
+    faviconUrl: 'https://www.bybit.com/favicon.ico',
     displayName: 'Bybit',
     webTradeUrl: 'https://www.bybit.com/en/trade/spot/',
     getWebTradeSymbol: function (symbol) {
@@ -42,6 +45,7 @@ const EXCHANGES = {
     apiOrderBookAsksPath: 'result.a'
   },
   bitget: {
+    faviconUrl: 'https://www.bitget.com/baseasset/favicon4.png',
     displayName: 'Bitget',
     webTradeUrl: 'https://www.bitget.com/spot/',
     getWebTradeSymbol: function (symbol) {
@@ -55,6 +59,7 @@ const EXCHANGES = {
     apiOrderBookAsksPath: 'data.asks'
   },
   kucoin: {
+    faviconUrl: 'https://www.kucoin.com/logo.png',
     displayName: 'KuCoin',
     webTradeUrl: 'https://www.kucoin.com/trade/',
     getWebTradeSymbol: function (symbol) {
@@ -68,6 +73,7 @@ const EXCHANGES = {
     apiOrderBookAsksPath: 'data.asks'
   },
   htx: {
+    faviconUrl: 'https://hbg-fed-static-prd.hbfile.net/enmarket/favicon.ico?exchange',
     displayName: 'HTX',
     webTradeUrl: 'https://www.htx.com/trade/',
     getWebTradeSymbol: function (symbol) {
@@ -81,6 +87,7 @@ const EXCHANGES = {
     apiOrderBookAsksPath: 'tick.asks'
   },
   gateio: {
+    faviconUrl: 'https://www.gate.io/favicon.ico',
     displayName: 'Gate.io',
     webTradeUrl: 'https://www.gate.io/trade/',
     getWebTradeSymbol: function (symbol) {
@@ -94,6 +101,7 @@ const EXCHANGES = {
     apiOrderBookAsksPath: 'asks'
   },
   bingx: {
+    faviconUrl: 'https://bin.bb-os.com/favicon.png',
     displayName: 'BingX',
     webTradeUrl: 'https://bingx.com/en/spot/',
     getWebTradeSymbol: function (symbol) {
@@ -107,6 +115,7 @@ const EXCHANGES = {
     apiOrderBookAsksPath: 'data.asks'
   },
   coinw: {
+    faviconUrl: 'https://www.coinw.com/favicon.ico',
     displayName: 'CoinW',
     webTradeUrl: 'https://www.coinw.com/spot/',
     getWebTradeSymbol: function (symbol) {
@@ -176,7 +185,11 @@ async function list (symbol) {
     a.setAttribute('rel', 'noopener noreferrer');
     a.setAttribute('href', `${exchangeDetails.webTradeUrl}${exchangeDetails.getWebTradeSymbol(symbol)}`);
     a.appendChild(i);
-    const td = createElement('td', `${exchangeDetails.displayName} `);
+    const img = document.createElement('img');
+    img.setAttribute('src', exchangeDetails.faviconUrl);
+    img.setAttribute('width', 24);
+    img.setAttribute('height', 24);
+    const td = createElement('td', `${img.outerHTML} ${exchangeDetails.displayName} `);
     td.appendChild(a);
     tr.appendChild(td);
     const url = `${exchangeDetails.apiOrderBookUrl}${exchangeDetails.getApiOrderBookSymbol(symbol)}`;
