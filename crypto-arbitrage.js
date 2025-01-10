@@ -131,6 +131,15 @@ const EXCHANGES = {
 };
 
 const SYMBOLS = {
+  'CRO-USDT': ['pionex', 'bitget', 'kucoin', 'gateio'],
+  'OKB-USDT': ['pionex', 'gateio', 'bingx', 'coinw'],
+  'USDE-USDT': ['bybit', 'bitget', 'kucoin', 'gateio'],
+  'DAI-USDT': ['pionex', 'bybit', 'bitget', 'htx', 'gateio', 'bingx', 'coinw'],
+  'FDUSD-USDT': ['binance', 'bitget', 'gateio', 'bingx'],
+  'USDD-USDT': ['bybit', 'kucoin', 'htx', 'gateio', 'coinw'],
+  'PYUSD-USDT': ['bybit', 'bitget', 'kucoin', 'htx', 'gateio', 'bingx'],
+  'TUSD-USDT': ['binance', 'bybit', 'bitget', 'kucoin', 'htx', 'gateio', 'bingx'],
+  'EURT-USDT': ['htx', 'gateio', 'bingx', 'coinw'],
   'XAUT-USDT': ['bitget', 'htx', 'gateio', 'bingx', 'coinw'],
   'PAXG-USDT': ['pionex', 'binance', 'bybit', 'bitget', 'kucoin', 'bingx', 'coinw']
 };
