@@ -159,21 +159,22 @@ const SYMBOLS = {
 };
 
 const params = new URLSearchParams(window.location.search);
-const symbol = params.has('symbol') ? params.get('symbol') : 'XAUT-USDT';
-if (symbol === 'all') {
-  listAll(false);
-} else if (symbol === 'all-wait') {
-  listAll(true);
+const symbols = params.has('symbols') ? params.get('symbols') : 'XAUT-USDT';
+const wait = params.has('wait') ? params.get('wait') === 'true' : false;
+if (symbols === 'all') {
+  listAll(Object.keys(SYMBOLS), wait);
+} else if (symbols.includes(',')) {
+  listAll(symbols.split(','), wait);
 } else {
-  list(symbol);
+  list(symbols);
 }
 
-async function listAll (wait) {
-  for (const s in SYMBOLS) {
+async function listAll (symbols, wait) {
+  for (const symbol of symbols) {
     if (wait) {
-      await list(s);
+      await list(symbol);
     } else {
-      list(s);
+      list(symbol);
     }
   }
 }
