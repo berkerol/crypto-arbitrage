@@ -14,7 +14,8 @@ const EXCHANGES = {
       return symbol.split('-').join('_');
     },
     apiOrderBookBidsPath: 'data.bids',
-    apiOrderBookAsksPath: 'data.asks'
+    apiOrderBookAsksPath: 'data.asks',
+    fee: 0.05
   },
   binance: {
     faviconUrl: 'https://bin.bnbstatic.com/static/images/common/favicon.ico',
@@ -28,7 +29,8 @@ const EXCHANGES = {
       return symbol.split('-').join('');
     },
     apiOrderBookBidsPath: 'bids',
-    apiOrderBookAsksPath: 'asks'
+    apiOrderBookAsksPath: 'asks',
+    fee: 0.1
   },
   bybit: {
     faviconUrl: 'https://www.bybit.com/favicon.ico',
@@ -42,7 +44,8 @@ const EXCHANGES = {
       return symbol.split('-').join('');
     },
     apiOrderBookBidsPath: 'result.b',
-    apiOrderBookAsksPath: 'result.a'
+    apiOrderBookAsksPath: 'result.a',
+    fee: 0.1
   },
   bitget: {
     faviconUrl: 'https://www.bitget.com/baseasset/favicon4.png',
@@ -56,7 +59,8 @@ const EXCHANGES = {
       return symbol.split('-').join('');
     },
     apiOrderBookBidsPath: 'data.bids',
-    apiOrderBookAsksPath: 'data.asks'
+    apiOrderBookAsksPath: 'data.asks',
+    fee: 0.1
   },
   kucoin: {
     faviconUrl: 'https://www.kucoin.com/logo.png',
@@ -70,7 +74,8 @@ const EXCHANGES = {
       return symbol;
     },
     apiOrderBookBidsPath: 'data.bids',
-    apiOrderBookAsksPath: 'data.asks'
+    apiOrderBookAsksPath: 'data.asks',
+    fee: 0.1
   },
   htx: {
     faviconUrl: 'https://hbg-fed-static-prd.hbfile.net/enmarket/favicon.ico?exchange',
@@ -84,7 +89,8 @@ const EXCHANGES = {
       return symbol.split('-').join('').toLowerCase();
     },
     apiOrderBookBidsPath: 'tick.bids',
-    apiOrderBookAsksPath: 'tick.asks'
+    apiOrderBookAsksPath: 'tick.asks',
+    fee: 0.2
   },
   gateio: {
     faviconUrl: 'https://www.gate.io/favicon.ico',
@@ -98,7 +104,8 @@ const EXCHANGES = {
       return symbol.split('-').join('_');
     },
     apiOrderBookBidsPath: 'bids',
-    apiOrderBookAsksPath: 'asks'
+    apiOrderBookAsksPath: 'asks',
+    fee: 0.1
   },
   bingx: {
     faviconUrl: 'https://bin.bb-os.com/favicon.png',
@@ -112,7 +119,8 @@ const EXCHANGES = {
       return symbol;
     },
     apiOrderBookBidsPath: 'data.bids',
-    apiOrderBookAsksPath: 'data.asks'
+    apiOrderBookAsksPath: 'data.asks',
+    fee: 0.1
   },
   coinw: {
     faviconUrl: 'https://www.coinw.com/favicon.ico',
@@ -126,7 +134,8 @@ const EXCHANGES = {
       return symbol.split('-').join('_');
     },
     apiOrderBookBidsPath: 'data.bids',
-    apiOrderBookAsksPath: 'data.asks'
+    apiOrderBookAsksPath: 'data.asks',
+    fee: 0.2
   },
   poloniex: {
     faviconUrl: 'https://poloniex.com/favicon.ico',
@@ -140,7 +149,8 @@ const EXCHANGES = {
       return symbol.split('-').join('_') + '/orderBook';
     },
     apiOrderBookBidsPath: 'bids',
-    apiOrderBookAsksPath: 'asks'
+    apiOrderBookAsksPath: 'asks',
+    fee: 0.2
   }
 };
 
@@ -253,13 +263,16 @@ async function list (symbol) {
         console.error('Fetch error:', error);
       });
   }
+  const highestSellExchangeDetails = EXCHANGES[highestSellExchange];
+  const lowestBuyExchangeDetails = EXCHANGES[lowestBuyExchange];
   let tableColor = 'table-danger';
   let summary = 'Summary: No arbitrage';
   if (highestSellPrice > lowestBuyPrice) {
     const profitPercent = ((highestSellPrice - lowestBuyPrice) / lowestBuyPrice * 100).toFixed(2);
-    if (+profitPercent > 0.2) {
+    const totalFee = highestSellExchangeDetails.fee + lowestBuyExchangeDetails.fee;
+    if (+profitPercent > totalFee) {
       tableColor = 'table-success';
-    } else if (+profitPercent > 0.1) {
+    } else if (+profitPercent > totalFee / 2) {
       tableColor = 'table-primary';
     } else {
       tableColor = 'table-warning';
@@ -268,7 +281,7 @@ async function list (symbol) {
   }
   const trSummary = createElement('tr', '', tableColor);
   trSummary.appendChild(createElement('td', summary));
-  trSummary.appendChild(createElement('td', `${highestSellPrice} on ${getImageHtml(EXCHANGES[highestSellExchange])} ${EXCHANGES[highestSellExchange].displayName}`));
-  trSummary.appendChild(createElement('td', `${lowestBuyPrice} on ${getImageHtml(EXCHANGES[lowestBuyExchange])} ${EXCHANGES[lowestBuyExchange].displayName}`));
+  trSummary.appendChild(createElement('td', `${highestSellPrice} on ${getImageHtml(highestSellExchangeDetails)} ${highestSellExchangeDetails.displayName} with ${highestSellExchangeDetails.fee}% fee`));
+  trSummary.appendChild(createElement('td', `${lowestBuyPrice} on ${getImageHtml(lowestBuyExchangeDetails)} ${lowestBuyExchangeDetails.displayName} with ${lowestBuyExchangeDetails.fee}% fee`));
   tbody.appendChild(trSummary);
 }
