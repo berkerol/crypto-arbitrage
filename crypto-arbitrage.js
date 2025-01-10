@@ -131,6 +131,8 @@ const EXCHANGES = {
 };
 
 const SYMBOLS = {
+  'CRO-USDT': ['pionex', 'bitget', 'kucoin'],
+  'OKB-USDT': ['pionex', 'gateio', 'bingx', 'coinw'],
   'USDE-USDT': ['bybit', 'bitget', 'kucoin', 'gateio'],
   'DAI-USDT': ['pionex', 'bybit', 'bitget', 'htx', 'gateio', 'bingx', 'coinw'],
   'FDUSD-USDT': ['bitget', 'gateio', 'bingx'],
