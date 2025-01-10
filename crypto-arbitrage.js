@@ -253,9 +253,21 @@ async function list (symbol) {
         console.error('Fetch error:', error);
       });
   }
-  const isArbitragePossible = highestSellPrice > lowestBuyPrice;
-  const trSummary = createElement('tr', '', isArbitragePossible ? 'table-success' : 'table-danger');
-  trSummary.appendChild(createElement('td', `Summary: ${isArbitragePossible ? 'possible arbitrage' : 'no arbitrage'}`));
+  let tableColor = 'table-danger';
+  let summary = 'Summary: No arbitrage';
+  if (highestSellPrice > lowestBuyPrice) {
+    const profitPercent = ((highestSellPrice - lowestBuyPrice) / lowestBuyPrice * 100).toFixed(2);
+    if (+profitPercent > 0.2) {
+      tableColor = 'table-success';
+    } else if (+profitPercent > 0.1) {
+      tableColor = 'table-primary';
+    } else {
+      tableColor = 'table-warning';
+    }
+    summary = `Summary: Possible arbitrage with ${profitPercent}% profit`;
+  }
+  const trSummary = createElement('tr', '', tableColor);
+  trSummary.appendChild(createElement('td', summary));
   trSummary.appendChild(createElement('td', `${highestSellPrice} on ${getImageHtml(EXCHANGES[highestSellExchange])} ${EXCHANGES[highestSellExchange].displayName}`));
   trSummary.appendChild(createElement('td', `${lowestBuyPrice} on ${getImageHtml(EXCHANGES[lowestBuyExchange])} ${EXCHANGES[lowestBuyExchange].displayName}`));
   tbody.appendChild(trSummary);
