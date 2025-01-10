@@ -152,6 +152,7 @@ const SYMBOLS = {
   'FDUSD-USDT': ['bitget', 'gateio', 'bingx'],
   'USDD-USDT': ['bybit', 'htx', 'gateio', 'coinw', 'poloniex'],
   'PYUSD-USDT': ['bybit', 'bitget', 'kucoin', 'htx', 'gateio', 'bingx'],
+  'TUSD-USDT': ['bybit', 'bitget', 'kucoin', 'htx', 'gateio', 'bingx', 'poloniex'],
   'EURT-USDT': ['htx', 'gateio', 'bingx', 'coinw'],
   'XAUT-USDT': ['bitget', 'htx', 'gateio', 'bingx', 'coinw'],
   'PAXG-USDT': ['pionex', 'binance', 'bybit', 'bitget', 'kucoin', 'bingx', 'coinw']
