@@ -183,17 +183,13 @@ function getBidOrAsk (path, res) {
   return bid;
 }
 
-function getBidAndAskFromExchange (symbol, exchangeDetails) {
+async function getBidAndAskFromExchange (symbol, exchangeDetails) {
   const url = `${exchangeDetails.apiOrderBookUrl}${exchangeDetails.getApiOrderBookSymbol(symbol)}`;
-  return window.fetch(url, { headers: { Origin: 'https://berkerol.github.io' } })
-    .then(res => {
-      return res.json();
-    })
-    .then(res => {
-      return [getBidOrAsk(exchangeDetails.apiOrderBookBidsPath, res), getBidOrAsk(exchangeDetails.apiOrderBookAsksPath, res)];
-    })
-    .catch(error => {
-      console.error(`Fetch error with ${symbol} and ${exchangeDetails.displayName}:`, error);
-      return null;
-    });
+  try {
+    const res = await (await window.fetch(url, { headers: { Origin: 'https://berkerol.github.io' } })).json();
+    return [getBidOrAsk(exchangeDetails.apiOrderBookBidsPath, res), getBidOrAsk(exchangeDetails.apiOrderBookAsksPath, res)];
+  } catch (error) {
+    console.error(`Fetch error with ${symbol} and ${exchangeDetails.displayName}:`, error);
+    return null;
+  }
 }
