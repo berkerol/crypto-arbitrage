@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // BIDS: buyers, green, highest to lowest
 // ASKS: sellers, red, lowest to highest
 const EXCHANGES = {
