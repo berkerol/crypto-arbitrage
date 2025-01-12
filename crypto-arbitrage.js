@@ -223,6 +223,21 @@ function getBidOrAsk (path, res) {
   return bid;
 }
 
+function getBidAndAskFromExchange (symbol, exchangeDetails) {
+  const url = `${exchangeDetails.apiOrderBookUrl}${exchangeDetails.getApiOrderBookSymbol(symbol)}`;
+  return window.fetch(url, { headers: { Origin: 'https://berkerol.github.io' } })
+    .then(res => {
+      return res.json();
+    })
+    .then(res => {
+      return [getBidOrAsk(exchangeDetails.apiOrderBookBidsPath, res), getBidOrAsk(exchangeDetails.apiOrderBookAsksPath, res)];
+    })
+    .catch(error => {
+      console.error(`Fetch error with ${symbol} and ${exchangeDetails.displayName}:`, error);
+      return null;
+    });
+}
+
 async function list (symbol) {
   const h2 = createElement('h2', symbol, 'd-flex justify-content-center mt-3');
   document.getElementsByClassName('container')[0].appendChild(h2);
@@ -245,40 +260,32 @@ async function list (symbol) {
   let lowestBuyPrice = 100000000;
   for (const exchange of SYMBOLS[symbol]) {
     const exchangeDetails = EXCHANGES[exchange];
-    const tr = document.createElement('tr');
-    const i = document.createElement('i');
-    i.setAttribute('class', 'fas fa-external-link-alt');
-    const a = document.createElement('a');
-    a.setAttribute('target', '_blank');
-    a.setAttribute('rel', 'noopener noreferrer');
-    a.setAttribute('href', `${exchangeDetails.webTradeUrl}${exchangeDetails.getWebTradeSymbol(symbol)}`);
-    a.appendChild(i);
-    const td = createElement('td', `${getImageHtml(exchangeDetails)} ${exchangeDetails.displayName} `);
-    td.appendChild(a);
-    tr.appendChild(td);
-    const url = `${exchangeDetails.apiOrderBookUrl}${exchangeDetails.getApiOrderBookSymbol(symbol)}`;
-    await window.fetch(url, { headers: { Origin: 'https://berkerol.github.io' } })
-      .then(res => {
-        return res.json();
-      })
-      .then(res => {
-        const bid = getBidOrAsk(exchangeDetails.apiOrderBookBidsPath, res);
-        tr.appendChild(createElement('td', bid));
-        if (bid > highestSellPrice) {
-          highestSellExchange = exchange;
-          highestSellPrice = bid;
-        }
-        const ask = getBidOrAsk(exchangeDetails.apiOrderBookAsksPath, res);
-        tr.appendChild(createElement('td', ask));
-        if (ask < lowestBuyPrice) {
-          lowestBuyExchange = exchange;
-          lowestBuyPrice = ask;
-        }
-        tbody.appendChild(tr);
-      })
-      .catch(error => {
-        console.error('Fetch error:', error);
-      });
+    const bidAndAsk = await getBidAndAskFromExchange(symbol, exchangeDetails);
+    if (bidAndAsk !== null) {
+      const tr = document.createElement('tr');
+      const i = document.createElement('i');
+      i.setAttribute('class', 'fas fa-external-link-alt');
+      const a = document.createElement('a');
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+      a.setAttribute('href', `${exchangeDetails.webTradeUrl}${exchangeDetails.getWebTradeSymbol(symbol)}`);
+      a.appendChild(i);
+      const td = createElement('td', `${getImageHtml(exchangeDetails)} ${exchangeDetails.displayName} `);
+      td.appendChild(a);
+      tr.appendChild(td);
+      const [bid, ask] = bidAndAsk;
+      tr.appendChild(createElement('td', bid));
+      if (bid > highestSellPrice) {
+        highestSellExchange = exchange;
+        highestSellPrice = bid;
+      }
+      tr.appendChild(createElement('td', ask));
+      if (ask < lowestBuyPrice) {
+        lowestBuyExchange = exchange;
+        lowestBuyPrice = ask;
+      }
+      tbody.appendChild(tr);
+    }
   }
   const highestSellExchangeDetails = EXCHANGES[highestSellExchange];
   const lowestBuyExchangeDetails = EXCHANGES[lowestBuyExchange];
