@@ -9,7 +9,8 @@ const EXCHANGES = {
     getWebTradeSymbol: function (symbol) {
       return symbol.split('-').join('_');
     },
-    apiOrderBookUrl: 'https://api.pionex.com/api/v1/market/depth?symbol=',
+    apiUrl: 'https://api.pionex.com',
+    apiOrderBookUrl: '/api/v1/market/depth?symbol=',
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
     },
@@ -24,7 +25,8 @@ const EXCHANGES = {
     getWebTradeSymbol: function (symbol) {
       return symbol.split('-').join('_');
     },
-    apiOrderBookUrl: 'https://api.binance.com/api/v3/depth?symbol=',
+    apiUrl: 'https://api.binance.com',
+    apiOrderBookUrl: '/api/v3/depth?symbol=',
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
     },
@@ -39,7 +41,8 @@ const EXCHANGES = {
     getWebTradeSymbol: function (symbol) {
       return symbol.split('-').join('/');
     },
-    apiOrderBookUrl: 'https://api.bybit.com/v5/market/orderbook?category=spot&symbol=',
+    apiUrl: 'https://api.bybit.com',
+    apiOrderBookUrl: '/v5/market/orderbook?category=spot&symbol=',
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
     },
@@ -54,7 +57,8 @@ const EXCHANGES = {
     getWebTradeSymbol: function (symbol) {
       return symbol.split('-').join('');
     },
-    apiOrderBookUrl: 'https://api.bitget.com/api/v2/spot/market/orderbook?symbol=',
+    apiUrl: 'https://api.bitget.com',
+    apiOrderBookUrl: '/api/v2/spot/market/orderbook?symbol=',
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
     },
@@ -69,7 +73,8 @@ const EXCHANGES = {
     getWebTradeSymbol: function (symbol) {
       return symbol;
     },
-    apiOrderBookUrl: 'https://api.kucoin.com/api/v1/market/orderbook/level2_20?symbol=',
+    apiUrl: 'https://api.kucoin.com',
+    apiOrderBookUrl: '/api/v1/market/orderbook/level2_20?symbol=',
     getApiOrderBookSymbol: function (symbol) {
       return symbol;
     },
@@ -84,7 +89,8 @@ const EXCHANGES = {
     getWebTradeSymbol: function (symbol) {
       return symbol.split('-').join('_').toLowerCase();
     },
-    apiOrderBookUrl: 'https://api.huobi.pro/market/depth?type=step0&symbol=',
+    apiUrl: 'https://api.huobi.pro',
+    apiOrderBookUrl: '/market/depth?type=step0&symbol=',
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('').toLowerCase();
     },
@@ -99,7 +105,8 @@ const EXCHANGES = {
     getWebTradeSymbol: function (symbol) {
       return symbol.split('-').join('_');
     },
-    apiOrderBookUrl: 'https://api.gateio.ws/api/v4/spot/order_book?currency_pair=',
+    apiUrl: 'https://api.gateio.ws',
+    apiOrderBookUrl: '/api/v4/spot/order_book?currency_pair=',
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
     },
@@ -114,7 +121,8 @@ const EXCHANGES = {
     getWebTradeSymbol: function (symbol) {
       return symbol;
     },
-    apiOrderBookUrl: 'https://open-api.bingx.com/openApi/spot/v1/market/depth?symbol=',
+    apiUrl: 'https://open-api.bingx.com',
+    apiOrderBookUrl: '/openApi/spot/v1/market/depth?symbol=',
     getApiOrderBookSymbol: function (symbol) {
       return symbol;
     },
@@ -129,7 +137,8 @@ const EXCHANGES = {
     getWebTradeSymbol: function (symbol) {
       return symbol.split('-').join('').toLowerCase();
     },
-    apiOrderBookUrl: 'https://api.coinw.com/api/v1/public?command=returnOrderBook&symbol=',
+    apiUrl: 'https://api.coinw.com',
+    apiOrderBookUrl: '/api/v1/public?command=returnOrderBook&symbol=',
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
     },
@@ -144,7 +153,8 @@ const EXCHANGES = {
     getWebTradeSymbol: function (symbol) {
       return symbol.split('-').join('_');
     },
-    apiOrderBookUrl: 'https://api.poloniex.com/markets/',
+    apiUrl: 'https://api.poloniex.com',
+    apiOrderBookUrl: '/markets/',
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_') + '/orderBook';
     },
@@ -184,7 +194,7 @@ function getBidOrAsk (path, res) {
 }
 
 async function getBidAndAskFromExchange (symbol, exchangeDetails) {
-  const url = `${exchangeDetails.apiOrderBookUrl}${exchangeDetails.getApiOrderBookSymbol(symbol)}`;
+  const url = `${exchangeDetails.apiUrl}${exchangeDetails.apiOrderBookUrl}${exchangeDetails.getApiOrderBookSymbol(symbol)}`;
   try {
     const res = await (await window.fetch(url, { headers: { Origin: 'https://berkerol.github.io' } })).json();
     return [getBidOrAsk(exchangeDetails.apiOrderBookBidsPath, res), getBidOrAsk(exchangeDetails.apiOrderBookAsksPath, res)];
