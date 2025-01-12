@@ -168,15 +168,32 @@ const SYMBOLS = {
   'PAXG-USDT': ['pionex', 'binance', 'bybit', 'bitget', 'kucoin', 'bingx', 'coinw']
 };
 
+const SYMBOL_GROUPS = {
+  exchangeTokens: ['CRO-USDT', 'OKB-USDT'],
+  stablecoins: ['USDE-USDT', 'DAI-USDT', 'FDUSD-USDT', 'USDD-USDT', 'PYUSD-USDT', 'TUSD-USDT', 'EURT-USDT'],
+  goldCoins: ['XAUT-USDT', 'PAXG-USDT']
+};
+
 const params = new URLSearchParams(window.location.search);
 const symbols = params.has('symbols') ? params.get('symbols') : 'XAUT-USDT';
+const symbolGroups = params.has('symbolGroups') ? params.get('symbolGroups') : '';
 const wait = params.has('wait') ? params.get('wait') === 'true' : false;
-if (symbols === 'all') {
-  listAll(Object.keys(SYMBOLS), wait);
-} else if (symbols.includes(',')) {
-  listAll(symbols.split(','), wait);
+if (symbolGroups !== '') {
+  if (symbolGroups.includes(',')) {
+    for (const symbolGroup of symbolGroups.split(',')) {
+      listAll(SYMBOL_GROUPS[symbolGroup], wait);
+    }
+  } else {
+    listAll(SYMBOL_GROUPS[symbolGroups], wait);
+  }
 } else {
-  list(symbols);
+  if (symbols === 'all') {
+    listAll(Object.keys(SYMBOLS), wait);
+  } else if (symbols.includes(',')) {
+    listAll(symbols.split(','), wait);
+  } else {
+    list(symbols);
+  }
 }
 
 async function listAll (symbols, wait) {
