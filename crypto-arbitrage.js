@@ -268,16 +268,17 @@ async function list (symbol) {
   let tableColor = 'table-danger';
   let summary = 'Summary: No arbitrage';
   if (highestSellPrice > lowestBuyPrice) {
-    const profitPercent = ((highestSellPrice - lowestBuyPrice) / lowestBuyPrice * 100).toFixed(2);
+    const difference = +(((highestSellPrice - lowestBuyPrice) / lowestBuyPrice * 100).toFixed(2));
     const totalFee = highestSellExchangeDetails.fee + lowestBuyExchangeDetails.fee;
-    if (+profitPercent > totalFee) {
+    const profit = +((difference - totalFee).toFixed(2));
+    if (profit > 0) {
       tableColor = 'table-success';
-    } else if (+profitPercent > totalFee / 2) {
+    } else if (Math.abs(profit) < totalFee / 2) {
       tableColor = 'table-primary';
     } else {
       tableColor = 'table-warning';
     }
-    summary = `Summary: Possible arbitrage with ${profitPercent}% profit`;
+    summary = `Summary: Possible arbitrage with ${difference}% difference and ${profit}% profit`;
   }
   const trSummary = createElement('tr', '', tableColor);
   trSummary.appendChild(createElement('td', summary));
