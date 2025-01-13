@@ -108,7 +108,7 @@ async function list (symbol) {
       tableColor = 'table-warning';
     }
     const minSize = Math.min(highestSellSize, lowestBuySize);
-    const profit = (profitPercentage * minSize).toFixed(2);
+    const profit = (profitPercentage * minSize / 100).toFixed(2);
     summary = `Summary: Possible arbitrage with ${differencePercentage.toFixed(2)}% difference and ${profitPercentage.toFixed(2)}% profit (${profit} profit from size ${minSize.toFixed(2)})`;
   }
   const trSummary = createElement('tr', '', tableColor);
