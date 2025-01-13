@@ -13,7 +13,7 @@ const EXCHANGES = {
     apiOrderBook: {
       url: '/api/v1/market/depth?limit=1&symbol=',
       bidPath: 'data.bids.0.0',
-      askPath: 'data.asks.0.0',
+      askPath: 'data.asks.0.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
@@ -31,7 +31,7 @@ const EXCHANGES = {
     apiOrderBook: {
       url: '/api/v3/depth?limit=1&symbol=',
       bidPath: 'bids.0.0',
-      askPath: 'asks.0.0',
+      askPath: 'asks.0.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
@@ -49,7 +49,7 @@ const EXCHANGES = {
     apiOrderBook: {
       url: '/v5/market/orderbook?category=spot&symbol=',
       bidPath: 'result.b.0.0',
-      askPath: 'result.a.0.0',
+      askPath: 'result.a.0.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
@@ -67,7 +67,7 @@ const EXCHANGES = {
     apiOrderBook: {
       url: '/api/v2/spot/market/orderbook?limit=1&symbol=',
       bidPath: 'data.bids.0.0',
-      askPath: 'data.asks.0.0',
+      askPath: 'data.asks.0.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
@@ -85,7 +85,7 @@ const EXCHANGES = {
     apiOrderBook: {
       url: '/api/v1/market/orderbook/level2_20?symbol=',
       bidPath: 'data.bids.0.0',
-      askPath: 'data.asks.0.0',
+      askPath: 'data.asks.0.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol;
@@ -103,7 +103,7 @@ const EXCHANGES = {
     apiOrderBook: {
       url: '/market/depth?type=step0&depth=5&symbol=',
       bidPath: 'tick.bids.0.0',
-      askPath: 'tick.asks.0.0',
+      askPath: 'tick.asks.0.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('').toLowerCase();
@@ -121,7 +121,7 @@ const EXCHANGES = {
     apiOrderBook: {
       url: '/api/v4/spot/order_book?limit=1&currency_pair=',
       bidPath: 'bids.0.0',
-      askPath: 'asks.0.0',
+      askPath: 'asks.0.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
@@ -139,7 +139,7 @@ const EXCHANGES = {
     apiOrderBook: {
       url: '/openApi/spot/v1/market/depth?limit=1&symbol=',
       bidPath: 'data.bids.0.0',
-      askPath: 'data.asks.0.0',
+      askPath: 'data.asks.0.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol;
@@ -157,7 +157,7 @@ const EXCHANGES = {
     apiOrderBook: {
       url: '/api/v1/public?command=returnOrderBook&symbol=',
       bidPath: 'data.bids.0.0',
-      askPath: 'data.asks.0.0',
+      askPath: 'data.asks.0.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
@@ -175,7 +175,7 @@ const EXCHANGES = {
     apiOrderBook: {
       url: '/markets/',
       bidPath: 'bids.0',
-      askPath: 'asks.0',
+      askPath: 'asks.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_') + '/orderBook?limit=5';
