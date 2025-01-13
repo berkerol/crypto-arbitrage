@@ -14,8 +14,8 @@ const EXCHANGES = {
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
     },
-    apiOrderBookBidsPath: 'data.bids',
-    apiOrderBookAsksPath: 'data.asks',
+    apiOrderBookBidsPath: 'data.bids.0.0',
+    apiOrderBookAsksPath: 'data.asks.0.0',
     fee: 0.05
   },
   binance: {
@@ -30,8 +30,8 @@ const EXCHANGES = {
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
     },
-    apiOrderBookBidsPath: 'bids',
-    apiOrderBookAsksPath: 'asks',
+    apiOrderBookBidsPath: 'bids.0.0',
+    apiOrderBookAsksPath: 'asks.0.0',
     fee: 0.1
   },
   bybit: {
@@ -46,8 +46,8 @@ const EXCHANGES = {
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
     },
-    apiOrderBookBidsPath: 'result.b',
-    apiOrderBookAsksPath: 'result.a',
+    apiOrderBookBidsPath: 'result.b.0.0',
+    apiOrderBookAsksPath: 'result.a.0.0',
     fee: 0.1
   },
   bitget: {
@@ -62,8 +62,8 @@ const EXCHANGES = {
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
     },
-    apiOrderBookBidsPath: 'data.bids',
-    apiOrderBookAsksPath: 'data.asks',
+    apiOrderBookBidsPath: 'data.bids.0.0',
+    apiOrderBookAsksPath: 'data.asks.0.0',
     fee: 0.1
   },
   kucoin: {
@@ -78,8 +78,8 @@ const EXCHANGES = {
     getApiOrderBookSymbol: function (symbol) {
       return symbol;
     },
-    apiOrderBookBidsPath: 'data.bids',
-    apiOrderBookAsksPath: 'data.asks',
+    apiOrderBookBidsPath: 'data.bids.0.0',
+    apiOrderBookAsksPath: 'data.asks.0.0',
     fee: 0.1
   },
   htx: {
@@ -94,8 +94,8 @@ const EXCHANGES = {
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('').toLowerCase();
     },
-    apiOrderBookBidsPath: 'tick.bids',
-    apiOrderBookAsksPath: 'tick.asks',
+    apiOrderBookBidsPath: 'tick.bids.0.0',
+    apiOrderBookAsksPath: 'tick.asks.0.0',
     fee: 0.2
   },
   gateio: {
@@ -110,8 +110,8 @@ const EXCHANGES = {
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
     },
-    apiOrderBookBidsPath: 'bids',
-    apiOrderBookAsksPath: 'asks',
+    apiOrderBookBidsPath: 'bids.0.0',
+    apiOrderBookAsksPath: 'asks.0.0',
     fee: 0.1
   },
   bingx: {
@@ -126,8 +126,8 @@ const EXCHANGES = {
     getApiOrderBookSymbol: function (symbol) {
       return symbol;
     },
-    apiOrderBookBidsPath: 'data.bids',
-    apiOrderBookAsksPath: 'data.asks',
+    apiOrderBookBidsPath: 'data.bids.0.0',
+    apiOrderBookAsksPath: 'data.asks.0.0',
     fee: 0.1
   },
   coinw: {
@@ -142,8 +142,8 @@ const EXCHANGES = {
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
     },
-    apiOrderBookBidsPath: 'data.bids',
-    apiOrderBookAsksPath: 'data.asks',
+    apiOrderBookBidsPath: 'data.bids.0.0',
+    apiOrderBookAsksPath: 'data.asks.0.0',
     fee: 0.2
   },
   poloniex: {
@@ -158,8 +158,8 @@ const EXCHANGES = {
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_') + '/orderBook?limit=5';
     },
-    apiOrderBookBidsPath: 'bids',
-    apiOrderBookAsksPath: 'asks',
+    apiOrderBookBidsPath: 'bids.0',
+    apiOrderBookAsksPath: 'asks.0',
     fee: 0.2
   }
 };
@@ -185,12 +185,7 @@ const SYMBOL_GROUPS = {
 };
 
 function getBidOrAsk (path, res) {
-  const bids = path.split('.').reduce((obj, key) => obj && obj[key], res);
-  let bid = bids[0];
-  if (Array.isArray(bid)) {
-    bid = bid[0];
-  }
-  return bid;
+  return path.split('.').reduce((obj, key) => obj && obj[key], res);
 }
 
 async function getBidAndAskFromExchange (symbol, exchangeDetails) {
