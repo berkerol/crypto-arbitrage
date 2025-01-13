@@ -270,6 +270,87 @@ const EXCHANGES = {
 };
 
 const SYMBOLS = {
+  'LTC-USDT': {
+    pionex: 0.0001,
+    binance: 0.0001,
+    bybit: 0.0001,
+    bitget: 0.001,
+    kucoin: 0.008,
+    htx: 0.001,
+    gateio: 0.005,
+    bingx: 0,
+    coinw: 0.019,
+    poloniex: 0.01
+  },
+  'ETC-USDT': {
+    pionex: 0.004,
+    binance: 0.004,
+    bybit: 0.01,
+    bitget: 0.008,
+    kucoin: 0.0157,
+    htx: 0.01,
+    gateio: 0.0208,
+    bingx: 0,
+    coinw: 0.074,
+    poloniex: 0.0437
+  },
+  'AAVE-USDT': {
+    pionex: 0.079,
+    binance: 0.0024,
+    bybit: 0.025,
+    bitget: 0.014,
+    kucoin: 0.02,
+    htx: 0.02,
+    gateio: 0.017,
+    bingx: 0,
+    coinw: 0.020,
+    poloniex: 0.042
+  },
+  'POL-USDT': {
+    pionex: 0.08,
+    binance: 0.08,
+    bybit: 0.2,
+    bitget: 0.08,
+    kucoin: 1.5,
+    htx: 0.1,
+    gateio: 1.13,
+    bingx: 0,
+    coinw: 0,
+    poloniex: 6.4
+  },
+  'VET-USDT': {
+    pionex: -1,
+    binance: 3,
+    bitget: 3,
+    kucoin: 20,
+    htx: 20,
+    gateio: 11.48,
+    bingx: 0,
+    coinw: 100
+  },
+  'FIL-USDT': {
+    pionex: 0.0005,
+    binance: 0.0005,
+    bybit: 0.001,
+    bitget: 0.0008,
+    kucoin: 0.114,
+    htx: 0.001,
+    gateio: 0.0989,
+    bingx: 0,
+    coinw: 0.1,
+    poloniex: 0.001
+  },
+  'ALGO-USDT': {
+    pionex: 0.008,
+    binance: 0.008,
+    bybit: 0.01,
+    bitget: 0.1,
+    kucoin: 5.5,
+    htx: 0.01,
+    gateio: 1.44,
+    bingx: 0,
+    coinw: 0.5
+  },
   'CRO-USDT': {
     pionex: -1,
     bitget: 1,
@@ -282,6 +363,18 @@ const SYMBOLS = {
     bingx: 0,
     coinw: 0.0906,
     poloniex: -1
+  },
+  'USDC-USDT': {
+    pionex: 0.2,
+    binance: 0,
+    bybit: 0.2,
+    bitget: 0,
+    kucoin: 1,
+    htx: 1.2,
+    gateio: 0.5,
+    bingx: 0,
+    coinw: 5.34,
+    poloniex: 5
   },
   'USDE-USDT': {
     bybit: 7,
@@ -358,7 +451,7 @@ const SYMBOLS = {
 
 const SYMBOL_GROUPS = {
   exchangeTokens: ['CRO-USDT', 'OKB-USDT'],
-  stablecoins: ['USDE-USDT', 'DAI-USDT', 'FDUSD-USDT', 'USDD-USDT', 'PYUSD-USDT', 'TUSD-USDT', 'EURT-USDT'],
+  stablecoins: ['USDC-USDT', 'USDE-USDT', 'DAI-USDT', 'FDUSD-USDT', 'USDD-USDT', 'PYUSD-USDT', 'TUSD-USDT', 'EURT-USDT'],
   goldCoins: ['XAUT-USDT', 'PAXG-USDT']
 };
 
