@@ -12,13 +12,13 @@ const EXCHANGES = {
     apiUrl: 'https://api.pionex.com',
     apiOrderBookTicker: {
       url: '/api/v1/market/bookTickers?symbol=',
-      bidPath: 'data.tickers.0.bidPrice',
-      askPath: 'data.tickers.0.askPrice'
+      bidPricePath: 'data.tickers.0.bidPrice',
+      askPricePath: 'data.tickers.0.askPrice'
     },
     apiOrderBook: {
       url: '/api/v1/market/depth?limit=1&symbol=',
-      bidPath: 'data.bids.0.0',
-      askPath: 'data.asks.0.0'
+      bidPricePath: 'data.bids.0.0',
+      askPricePath: 'data.asks.0.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
@@ -35,13 +35,13 @@ const EXCHANGES = {
     apiUrl: 'https://api.binance.com',
     apiOrderBookTicker: {
       url: '/api/v3/ticker/bookTicker?symbol=',
-      bidPath: 'bidPrice',
-      askPath: 'askPrice'
+      bidPricePath: 'bidPrice',
+      askPricePath: 'askPrice'
     },
     apiOrderBook: {
       url: '/api/v3/depth?limit=1&symbol=',
-      bidPath: 'bids.0.0',
-      askPath: 'asks.0.0'
+      bidPricePath: 'bids.0.0',
+      askPricePath: 'asks.0.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
@@ -58,13 +58,13 @@ const EXCHANGES = {
     apiUrl: 'https://api.bybit.com',
     apiOrderBookTicker: {
       url: '/v5/market/tickers?category=spot&symbol=',
-      bidPath: 'result.category.list.0.bid1Price',
-      askPath: 'result.category.list.0.ask1Price'
+      bidPricePath: 'result.category.list.0.bid1Price',
+      askPricePath: 'result.category.list.0.ask1Price'
     },
     apiOrderBook: {
       url: '/v5/market/orderbook?category=spot&symbol=',
-      bidPath: 'result.b.0.0',
-      askPath: 'result.a.0.0'
+      bidPricePath: 'result.b.0.0',
+      askPricePath: 'result.a.0.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
@@ -81,13 +81,13 @@ const EXCHANGES = {
     apiUrl: 'https://api.bitget.com',
     apiOrderBookTicker: {
       url: '/api/v2/spot/market/tickers?symbol=',
-      bidPath: 'data.0.bidPr',
-      askPath: 'data.0.askPr'
+      bidPricePath: 'data.0.bidPr',
+      askPricePath: 'data.0.askPr'
     },
     apiOrderBook: {
       url: '/api/v2/spot/market/orderbook?limit=1&symbol=',
-      bidPath: 'data.bids.0.0',
-      askPath: 'data.asks.0.0'
+      bidPricePath: 'data.bids.0.0',
+      askPricePath: 'data.asks.0.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
@@ -104,13 +104,13 @@ const EXCHANGES = {
     apiUrl: 'https://api.kucoin.com',
     apiOrderBookTicker: {
       url: '/api/v1/market/orderbook/level1?symbol=',
-      bidPath: 'data.bestBid',
-      askPath: 'data.bestAsk'
+      bidPricePath: 'data.bestBid',
+      askPricePath: 'data.bestAsk'
     },
     apiOrderBook: {
       url: '/api/v1/market/orderbook/level2_20?symbol=',
-      bidPath: 'data.bids.0.0',
-      askPath: 'data.asks.0.0'
+      bidPricePath: 'data.bids.0.0',
+      askPricePath: 'data.asks.0.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol;
@@ -127,13 +127,13 @@ const EXCHANGES = {
     apiUrl: 'https://api.huobi.pro',
     apiOrderBookTicker: {
       url: '/market/detail/merged?symbol=',
-      bidPath: 'tick.bid.0',
-      askPath: 'tick.ask.0'
+      bidPricePath: 'tick.bid.0',
+      askPricePath: 'tick.ask.0'
     },
     apiOrderBook: {
       url: '/market/depth?type=step0&depth=5&symbol=',
-      bidPath: 'tick.bids.0.0',
-      askPath: 'tick.asks.0.0'
+      bidPricePath: 'tick.bids.0.0',
+      askPricePath: 'tick.asks.0.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('').toLowerCase();
@@ -150,13 +150,13 @@ const EXCHANGES = {
     apiUrl: 'https://api.gateio.ws',
     apiOrderBookTicker: {
       url: '/api/v4/spot/tickers?currency_pair=',
-      bidPath: '0.highest_bid',
-      askPath: '0.lowest_ask'
+      bidPricePath: '0.highest_bid',
+      askPricePath: '0.lowest_ask'
     },
     apiOrderBook: {
       url: '/api/v4/spot/order_book?limit=1&currency_pair=',
-      bidPath: 'bids.0.0',
-      askPath: 'asks.0.0'
+      bidPricePath: 'bids.0.0',
+      askPricePath: 'asks.0.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
@@ -173,13 +173,13 @@ const EXCHANGES = {
     apiUrl: 'https://open-api.bingx.com',
     apiOrderBookTicker: {
       url: '/openApi/spot/v1/ticker/bookTicker?symbol=',
-      bidPath: 'data.0.bidPrice',
-      askPath: 'data.0.askPrice'
+      bidPricePath: 'data.0.bidPrice',
+      askPricePath: 'data.0.askPrice'
     },
     apiOrderBook: {
       url: '/openApi/spot/v1/market/depth?limit=1&symbol=',
-      bidPath: 'data.bids.0.0',
-      askPath: 'data.asks.0.0'
+      bidPricePath: 'data.bids.0.0',
+      askPricePath: 'data.asks.0.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol;
@@ -196,8 +196,8 @@ const EXCHANGES = {
     apiUrl: 'https://api.coinw.com',
     apiOrderBook: {
       url: '/api/v1/public?command=returnOrderBook&symbol=',
-      bidPath: 'data.bids.0.0',
-      askPath: 'data.asks.0.0'
+      bidPricePath: 'data.bids.0.0',
+      askPricePath: 'data.asks.0.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
@@ -215,14 +215,14 @@ const EXCHANGES = {
     apiOrderBookTicker: {
       url: '/markets/',
       parameters: '/ticker24h',
-      bidPath: 'bid',
-      askPath: 'ask'
+      bidPricePath: 'bid',
+      askPricePath: 'ask'
     },
     apiOrderBook: {
       url: '/markets/',
       parameters: '/orderBook?limit=5',
-      bidPath: 'bids.0',
-      askPath: 'asks.0'
+      bidPricePath: 'bids.0',
+      askPricePath: 'asks.0'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
@@ -263,8 +263,8 @@ async function getBidAndAskFromApi (symbol, exchangeDetails, exchangeApiDetails)
   const url = `${exchangeDetails.apiUrl}${exchangeApiDetails.url}${exchangeDetails.getApiOrderBookSymbol(symbol)}${'parameters' in exchangeApiDetails ? exchangeApiDetails.parameters : ''}`;
   try {
     const res = await sendRequest(url);
-    const bid = getBidOrAsk(exchangeApiDetails.bidPath, res);
-    const ask = getBidOrAsk(exchangeApiDetails.askPath, res);
+    const bid = getBidOrAsk(exchangeApiDetails.bidPricePath, res);
+    const ask = getBidOrAsk(exchangeApiDetails.askPricePath, res);
     if (bid && ask) {
       return [bid, ask];
     }
