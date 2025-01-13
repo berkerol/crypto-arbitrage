@@ -174,11 +174,12 @@ const EXCHANGES = {
     apiUrl: 'https://api.poloniex.com',
     apiOrderBook: {
       url: '/markets/',
+      parameters: '/orderBook?limit=5',
       bidPath: 'bids.0',
       askPath: 'asks.0'
     },
     getApiOrderBookSymbol: function (symbol) {
-      return symbol.split('-').join('_') + '/orderBook?limit=5';
+      return symbol.split('-').join('_');
     },
     fee: 0.2
   }
@@ -213,7 +214,7 @@ async function sendRequest (url) {
 }
 
 async function getBidAndAskFromExchange (symbol, exchangeDetails) {
-  const url = `${exchangeDetails.apiUrl}${exchangeDetails.apiOrderBook.url}${exchangeDetails.getApiOrderBookSymbol(symbol)}`;
+  const url = `${exchangeDetails.apiUrl}${exchangeDetails.apiOrderBook.url}${exchangeDetails.getApiOrderBookSymbol(symbol)}${'parameters' in exchangeDetails.apiOrderBook ? exchangeDetails.apiOrderBook.parameters : ''}`;
   try {
     const res = await sendRequest(url);
     return [getBidOrAsk(exchangeDetails.apiOrderBook.bidPath, res), getBidOrAsk(exchangeDetails.apiOrderBook.askPath, res)];
