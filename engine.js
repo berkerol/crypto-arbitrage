@@ -316,7 +316,7 @@ const SYMBOLS = {
     gateio: 1.13,
     bingx: 0,
     coinw: 0,
-    poloniex: 6.4,
+    poloniex: 6.4
   },
   'VET-USDT': {
     pionex: -1,
