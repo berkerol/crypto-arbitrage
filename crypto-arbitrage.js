@@ -61,7 +61,7 @@ async function list (symbol) {
   let lowestBuyExchange = '';
   let lowestBuyPrice = 100000000;
   let lowestBuySize = 0;
-  for (const exchange of SYMBOLS[symbol]) {
+  for (const exchange of Object.keys(SYMBOLS[symbol])) {
     const exchangeDetails = EXCHANGES[exchange];
     const bidAndAsk = await getBidAndAskFromExchange(symbol, exchangeDetails);
     if (bidAndAsk !== null) {
@@ -100,16 +100,30 @@ async function list (symbol) {
     const differencePercentage = (highestSellPrice - lowestBuyPrice) / lowestBuyPrice * 100;
     const totalFee = highestSellExchangeDetails.fee + lowestBuyExchangeDetails.fee;
     const profitPercentage = differencePercentage - totalFee;
-    if (profitPercentage > 0) {
-      tableColor = 'table-success';
-    } else if (Math.abs(profitPercentage) < totalFee / 2) {
-      tableColor = 'table-primary';
-    } else {
-      tableColor = 'table-warning';
-    }
     const minSize = Math.min(highestSellSize, lowestBuySize);
-    const profit = (profitPercentage * minSize / 100).toFixed(2);
-    summary = `Summary: Possible arbitrage with ${differencePercentage.toFixed(2)}% difference and ${profitPercentage.toFixed(2)}% profit (${profit} profit from size ${minSize.toFixed(2)})`;
+    const profit = profitPercentage * minSize / 100;
+    let withdrawalFee = SYMBOLS[symbol][lowestBuyExchange];
+    let isWithdrawPossible = true;
+    if (withdrawalFee === -1) {
+      withdrawalFee = 0;
+      isWithdrawPossible = false;
+    } else {
+      withdrawalFee *= lowestBuyPrice;
+    }
+    const profitAfterWithdrawalFee = profit - withdrawalFee;
+    tableColor = 'table-warning';
+    summary = `Summary: Possible arbitrage with ${differencePercentage.toFixed(2)}% difference and ${profitPercentage.toFixed(2)}% profit`;
+    if (profit > 0) {
+      tableColor = 'table-primary';
+      summary += `<br>${profit.toFixed(2)} profit from size ${minSize.toFixed(2)}`;
+      if (!isWithdrawPossible) {
+        summary += '<br>Withdrawal not possible';
+      }
+    }
+    if (profitAfterWithdrawalFee > 0 && isWithdrawPossible) {
+      tableColor = 'table-success';
+      summary += `<br>Profit after withdrawal fee: ${profitAfterWithdrawalFee.toFixed(2)} with withdrawal fee: ${withdrawalFee.toFixed(2)}`;
+    }
   }
   const trSummary = createElement('tr', '', tableColor);
   trSummary.appendChild(createElement('td', summary));
