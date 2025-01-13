@@ -270,17 +270,90 @@ const EXCHANGES = {
 };
 
 const SYMBOLS = {
-  'CRO-USDT': ['pionex', 'bitget', 'kucoin', 'gateio'],
-  'OKB-USDT': ['pionex', 'gateio', 'bingx', 'coinw', 'poloniex'],
-  'USDE-USDT': ['bybit', 'bitget', 'kucoin', 'gateio', 'poloniex'],
-  'DAI-USDT': ['pionex', 'bybit', 'bitget', 'htx', 'gateio', 'bingx', 'coinw', 'poloniex'],
-  'FDUSD-USDT': ['binance', 'bitget', 'gateio', 'bingx'],
-  'USDD-USDT': ['bybit', 'kucoin', 'htx', 'gateio', 'coinw', 'poloniex'],
-  'PYUSD-USDT': ['bybit', 'bitget', 'kucoin', 'htx', 'gateio', 'bingx'],
-  'TUSD-USDT': ['binance', 'bybit', 'bitget', 'kucoin', 'htx', 'gateio', 'bingx', 'poloniex'],
-  'EURT-USDT': ['htx', 'gateio', 'bingx', 'coinw'],
-  'XAUT-USDT': ['bitget', 'htx', 'gateio', 'bingx', 'coinw'],
-  'PAXG-USDT': ['pionex', 'binance', 'bybit', 'bitget', 'kucoin', 'bingx', 'coinw']
+  'CRO-USDT': {
+    pionex: -1,
+    bitget: 1,
+    kucoin: 3,
+    gateio: 3.76
+  },
+  'OKB-USDT': {
+    pionex: -1,
+    gateio: 0.0946,
+    bingx: 0,
+    coinw: 0.0906,
+    poloniex: -1
+  },
+  'USDE-USDT': {
+    bybit: 7,
+    bitget: 4,
+    kucoin: 10,
+    gateio: 4.28,
+    poloniex: 21.34
+  },
+  'DAI-USDT': {
+    pionex: 7.52,
+    bybit: 0.8,
+    bitget: 0.2,
+    htx: 5.62,
+    gateio: 0.5,
+    bingx: 0,
+    coinw: 3.41,
+    poloniex: 2.02
+  },
+  'FDUSD-USDT': {
+    binance: 0,
+    bitget: 0,
+    gateio: 0.5,
+    bingx: 0
+  },
+  'USDD-USDT': {
+    bybit: 2.6,
+    kucoin: 1,
+    htx: 0.5,
+    gateio: 2.02,
+    coinw: 1.92,
+    poloniex: 1.5
+  },
+  'PYUSD-USDT': {
+    bybit: 4,
+    bitget: 1.5,
+    kucoin: 9,
+    htx: 5.6348,
+    gateio: 4.32,
+    bingx: 0
+  },
+  'TUSD-USDT': {
+    binance: 0.7,
+    bybit: 1,
+    bitget: 0.7,
+    kucoin: 0.3,
+    htx: 1,
+    gateio: 2,
+    bingx: 0,
+    poloniex: 2
+  },
+  'EURT-USDT': {
+    htx: 5.4916,
+    gateio: 4.27,
+    bingx: 0,
+    coinw: 3.96
+  },
+  'XAUT-USDT': {
+    bitget: 0.00151849,
+    htx: 0.002111,
+    gateio: 0.00161,
+    bingx: 0,
+    coinw: 0.000954
+  },
+  'PAXG-USDT': {
+    pionex: -1,
+    binance: 0.0022,
+    bybit: 0.0055,
+    bitget: 0.00149926,
+    kucoin: 0.006,
+    bingx: 0,
+    coinw: 0.001797
+  }
 };
 
 const SYMBOL_GROUPS = {
