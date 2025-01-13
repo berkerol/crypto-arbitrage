@@ -188,10 +188,14 @@ function getBidOrAsk (path, res) {
   return path.split('.').reduce((obj, key) => obj && obj[key], res);
 }
 
+async function sendRequest (url) {
+  return (await window.fetch(url, { headers: { Origin: 'https://berkerol.github.io' } })).json();
+}
+
 async function getBidAndAskFromExchange (symbol, exchangeDetails) {
   const url = `${exchangeDetails.apiUrl}${exchangeDetails.apiOrderBookUrl}${exchangeDetails.getApiOrderBookSymbol(symbol)}`;
   try {
-    const res = await (await window.fetch(url, { headers: { Origin: 'https://berkerol.github.io' } })).json();
+    const res = await sendRequest(url);
     return [getBidOrAsk(exchangeDetails.apiOrderBookBidPath, res), getBidOrAsk(exchangeDetails.apiOrderBookAskPath, res)];
   } catch (error) {
     console.error(`Fetch error with ${symbol} and ${exchangeDetails.displayName}:`, error);
