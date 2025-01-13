@@ -13,12 +13,16 @@ const EXCHANGES = {
     apiOrderBookTicker: {
       url: '/api/v1/market/bookTickers?symbol=',
       bidPricePath: 'data.tickers.0.bidPrice',
-      askPricePath: 'data.tickers.0.askPrice'
+      bidSizePath: 'data.tickers.0.bidSize',
+      askPricePath: 'data.tickers.0.askPrice',
+      askSizePath: 'data.tickers.0.askSize'
     },
     apiOrderBook: {
       url: '/api/v1/market/depth?limit=1&symbol=',
       bidPricePath: 'data.bids.0.0',
-      askPricePath: 'data.asks.0.0'
+      bidSizePath: 'data.bids.0.1',
+      askPricePath: 'data.asks.0.0',
+      askSizePath: 'data.asks.0.1'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
@@ -36,12 +40,16 @@ const EXCHANGES = {
     apiOrderBookTicker: {
       url: '/api/v3/ticker/bookTicker?symbol=',
       bidPricePath: 'bidPrice',
-      askPricePath: 'askPrice'
+      bidSizePath: 'bidQty',
+      askPricePath: 'askPrice',
+      askSizePath: 'askQty'
     },
     apiOrderBook: {
       url: '/api/v3/depth?limit=1&symbol=',
       bidPricePath: 'bids.0.0',
-      askPricePath: 'asks.0.0'
+      bidSizePath: 'bids.0.1',
+      askPricePath: 'asks.0.0',
+      askSizePath: 'asks.0.1'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
@@ -59,12 +67,16 @@ const EXCHANGES = {
     apiOrderBookTicker: {
       url: '/v5/market/tickers?category=spot&symbol=',
       bidPricePath: 'result.category.list.0.bid1Price',
-      askPricePath: 'result.category.list.0.ask1Price'
+      bidSizePath: 'result.category.list.0.bid1Size',
+      askPricePath: 'result.category.list.0.ask1Price',
+      askSizePath: 'result.category.list.0.ask1Size'
     },
     apiOrderBook: {
       url: '/v5/market/orderbook?category=spot&symbol=',
       bidPricePath: 'result.b.0.0',
-      askPricePath: 'result.a.0.0'
+      bidSizePath: 'result.b.0.1',
+      askPricePath: 'result.a.0.0',
+      askSizePath: 'result.a.0.1'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
@@ -82,12 +94,16 @@ const EXCHANGES = {
     apiOrderBookTicker: {
       url: '/api/v2/spot/market/tickers?symbol=',
       bidPricePath: 'data.0.bidPr',
-      askPricePath: 'data.0.askPr'
+      bidSizePath: 'data.0.bidSz',
+      askPricePath: 'data.0.askPr',
+      askSizePath: 'data.0.askSz'
     },
     apiOrderBook: {
       url: '/api/v2/spot/market/orderbook?limit=1&symbol=',
       bidPricePath: 'data.bids.0.0',
-      askPricePath: 'data.asks.0.0'
+      bidSizePath: 'data.bids.0.1',
+      askPricePath: 'data.asks.0.0',
+      askSizePath: 'data.asks.0.1'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
@@ -105,12 +121,16 @@ const EXCHANGES = {
     apiOrderBookTicker: {
       url: '/api/v1/market/orderbook/level1?symbol=',
       bidPricePath: 'data.bestBid',
-      askPricePath: 'data.bestAsk'
+      bidSizePath: 'data.bestBidSize',
+      askPricePath: 'data.bestAsk',
+      askSizePath: 'data.bestAskSize'
     },
     apiOrderBook: {
       url: '/api/v1/market/orderbook/level2_20?symbol=',
       bidPricePath: 'data.bids.0.0',
-      askPricePath: 'data.asks.0.0'
+      bidSizePath: 'data.bids.0.1',
+      askPricePath: 'data.asks.0.0',
+      askSizePath: 'data.asks.0.1'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol;
@@ -128,12 +148,16 @@ const EXCHANGES = {
     apiOrderBookTicker: {
       url: '/market/detail/merged?symbol=',
       bidPricePath: 'tick.bid.0',
-      askPricePath: 'tick.ask.0'
+      bidSizePath: 'tick.bid.1',
+      askPricePath: 'tick.ask.0',
+      askSizePath: 'tick.ask.1'
     },
     apiOrderBook: {
       url: '/market/depth?type=step0&depth=5&symbol=',
       bidPricePath: 'tick.bids.0.0',
-      askPricePath: 'tick.asks.0.0'
+      bidSizePath: 'tick.bids.0.1',
+      askPricePath: 'tick.asks.0.0',
+      askSizePath: 'tick.asks.0.1'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('').toLowerCase();
@@ -151,12 +175,16 @@ const EXCHANGES = {
     apiOrderBookTicker: {
       url: '/api/v4/spot/tickers?currency_pair=',
       bidPricePath: '0.highest_bid',
-      askPricePath: '0.lowest_ask'
+      bidSizePath: '0.highest_size',
+      askPricePath: '0.lowest_ask',
+      askSizePath: '0.lowest_size'
     },
     apiOrderBook: {
       url: '/api/v4/spot/order_book?limit=1&currency_pair=',
       bidPricePath: 'bids.0.0',
-      askPricePath: 'asks.0.0'
+      bidSizePath: 'bids.0.1',
+      askPricePath: 'asks.0.0',
+      askSizePath: 'asks.0.1'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
@@ -174,12 +202,16 @@ const EXCHANGES = {
     apiOrderBookTicker: {
       url: '/openApi/spot/v1/ticker/bookTicker?symbol=',
       bidPricePath: 'data.0.bidPrice',
-      askPricePath: 'data.0.askPrice'
+      bidSizePath: 'data.0.bidVolume',
+      askPricePath: 'data.0.askPrice',
+      askSizePath: 'data.0.askVolume'
     },
     apiOrderBook: {
       url: '/openApi/spot/v1/market/depth?limit=1&symbol=',
       bidPricePath: 'data.bids.0.0',
-      askPricePath: 'data.asks.0.0'
+      bidSizePath: 'data.bids.0.1',
+      askPricePath: 'data.asks.0.0',
+      askSizePath: 'data.asks.0.1'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol;
@@ -197,7 +229,9 @@ const EXCHANGES = {
     apiOrderBook: {
       url: '/api/v1/public?command=returnOrderBook&symbol=',
       bidPricePath: 'data.bids.0.0',
-      askPricePath: 'data.asks.0.0'
+      bidSizePath: 'data.bids.0.1',
+      askPricePath: 'data.asks.0.0',
+      askSizePath: 'data.asks.0.1'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
@@ -216,13 +250,17 @@ const EXCHANGES = {
       url: '/markets/',
       parameters: '/ticker24h',
       bidPricePath: 'bid',
-      askPricePath: 'ask'
+      bidSizePath: 'bidQuantity',
+      askPricePath: 'ask',
+      askSizePath: 'askQuantity'
     },
     apiOrderBook: {
       url: '/markets/',
       parameters: '/orderBook?limit=5',
       bidPricePath: 'bids.0',
-      askPricePath: 'asks.0'
+      bidSizePath: 'bid.0', // doesn't exist
+      askPricePath: 'asks.0',
+      askSizePath: 'ask.0' // doesn't exist
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
@@ -263,10 +301,12 @@ async function getBidAndAskFromApi (symbol, exchangeDetails, exchangeApiDetails)
   const url = `${exchangeDetails.apiUrl}${exchangeApiDetails.url}${exchangeDetails.getApiOrderBookSymbol(symbol)}${'parameters' in exchangeApiDetails ? exchangeApiDetails.parameters : ''}`;
   try {
     const res = await sendRequest(url);
-    const bid = getBidOrAsk(exchangeApiDetails.bidPricePath, res);
-    const ask = getBidOrAsk(exchangeApiDetails.askPricePath, res);
-    if (bid && ask) {
-      return [bid, ask];
+    const bidPrice = getBidOrAsk(exchangeApiDetails.bidPricePath, res);
+    const bidSize = getBidOrAsk(exchangeApiDetails.bidSizePath, res);
+    const askPrice = getBidOrAsk(exchangeApiDetails.askPricePath, res);
+    const askSize = getBidOrAsk(exchangeApiDetails.askSizePath, res);
+    if (bidPrice && bidSize && askPrice && askSize) {
+      return [bidPrice, bidSize, askPrice, askSize];
     }
     return null;
   } catch (error) {

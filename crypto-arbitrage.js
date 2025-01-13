@@ -57,8 +57,10 @@ async function list (symbol) {
   div.appendChild(table);
   let highestSellExchange = '';
   let highestSellPrice = 0;
+  let highestSellSize = 0;
   let lowestBuyExchange = '';
   let lowestBuyPrice = 100000000;
+  let lowestBuySize = 0;
   for (const exchange of SYMBOLS[symbol]) {
     const exchangeDetails = EXCHANGES[exchange];
     const bidAndAsk = await getBidAndAskFromExchange(symbol, exchangeDetails);
@@ -74,16 +76,18 @@ async function list (symbol) {
       const td = createElement('td', `${getImageHtml(exchangeDetails)} ${exchangeDetails.displayName} `);
       td.appendChild(a);
       tr.appendChild(td);
-      const [bid, ask] = bidAndAsk;
-      tr.appendChild(createElement('td', bid));
-      if (bid > highestSellPrice) {
+      const [bidPrice, bidSize, askPrice, askSize] = bidAndAsk;
+      tr.appendChild(createElement('td', `${bidPrice} with size ${bidSize}`));
+      if (bidPrice > highestSellPrice) {
         highestSellExchange = exchange;
-        highestSellPrice = bid;
+        highestSellPrice = bidPrice;
+        highestSellSize = bidSize;
       }
-      tr.appendChild(createElement('td', ask));
-      if (ask < lowestBuyPrice) {
+      tr.appendChild(createElement('td', `${askPrice} with size ${askSize}`));
+      if (askPrice < lowestBuyPrice) {
         lowestBuyExchange = exchange;
-        lowestBuyPrice = ask;
+        lowestBuyPrice = askPrice;
+        lowestBuySize = askSize;
       }
       tbody.appendChild(tr);
     }
@@ -93,17 +97,19 @@ async function list (symbol) {
   let tableColor = 'table-danger';
   let summary = 'Summary: No arbitrage';
   if (highestSellPrice > lowestBuyPrice) {
-    const difference = +(((highestSellPrice - lowestBuyPrice) / lowestBuyPrice * 100).toFixed(2));
+    const differencePercentage = (highestSellPrice - lowestBuyPrice) / lowestBuyPrice * 100;
     const totalFee = highestSellExchangeDetails.fee + lowestBuyExchangeDetails.fee;
-    const profit = +((difference - totalFee).toFixed(2));
-    if (profit > 0) {
+    const profitPercentage = differencePercentage - totalFee;
+    if (profitPercentage > 0) {
       tableColor = 'table-success';
-    } else if (Math.abs(profit) < totalFee / 2) {
+    } else if (Math.abs(profitPercentage) < totalFee / 2) {
       tableColor = 'table-primary';
     } else {
       tableColor = 'table-warning';
     }
-    summary = `Summary: Possible arbitrage with ${difference}% difference and ${profit}% profit`;
+    const minSize = Math.min(highestSellSize, lowestBuySize);
+    const profit = (profitPercentage * minSize / 100).toFixed(2);
+    summary = `Summary: Possible arbitrage with ${differencePercentage.toFixed(2)}% difference and ${profitPercentage.toFixed(2)}% profit (${profit} profit from size ${minSize.toFixed(2)})`;
   }
   const trSummary = createElement('tr', '', tableColor);
   trSummary.appendChild(createElement('td', summary));
