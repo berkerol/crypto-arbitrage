@@ -10,7 +10,7 @@ const EXCHANGES = {
       return symbol.split('-').join('_');
     },
     apiUrl: 'https://api.pionex.com',
-    apiOrderBookUrl: '/api/v1/market/depth?symbol=',
+    apiOrderBookUrl: '/api/v1/market/depth?limit=1&symbol=',
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
     },
@@ -26,7 +26,7 @@ const EXCHANGES = {
       return symbol.split('-').join('_');
     },
     apiUrl: 'https://api.binance.com',
-    apiOrderBookUrl: '/api/v3/depth?symbol=',
+    apiOrderBookUrl: '/api/v3/depth?limit=1&symbol=',
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
     },
@@ -58,7 +58,7 @@ const EXCHANGES = {
       return symbol.split('-').join('');
     },
     apiUrl: 'https://api.bitget.com',
-    apiOrderBookUrl: '/api/v2/spot/market/orderbook?symbol=',
+    apiOrderBookUrl: '/api/v2/spot/market/orderbook?limit=1&symbol=',
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
     },
@@ -90,7 +90,7 @@ const EXCHANGES = {
       return symbol.split('-').join('_').toLowerCase();
     },
     apiUrl: 'https://api.huobi.pro',
-    apiOrderBookUrl: '/market/depth?type=step0&symbol=',
+    apiOrderBookUrl: '/market/depth?type=step0&depth=5&symbol=',
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('').toLowerCase();
     },
@@ -106,7 +106,7 @@ const EXCHANGES = {
       return symbol.split('-').join('_');
     },
     apiUrl: 'https://api.gateio.ws',
-    apiOrderBookUrl: '/api/v4/spot/order_book?currency_pair=',
+    apiOrderBookUrl: '/api/v4/spot/order_book?limit=1&currency_pair=',
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
     },
@@ -122,7 +122,7 @@ const EXCHANGES = {
       return symbol;
     },
     apiUrl: 'https://open-api.bingx.com',
-    apiOrderBookUrl: '/openApi/spot/v1/market/depth?symbol=',
+    apiOrderBookUrl: '/openApi/spot/v1/market/depth?limit=1&symbol=',
     getApiOrderBookSymbol: function (symbol) {
       return symbol;
     },
@@ -156,7 +156,7 @@ const EXCHANGES = {
     apiUrl: 'https://api.poloniex.com',
     apiOrderBookUrl: '/markets/',
     getApiOrderBookSymbol: function (symbol) {
-      return symbol.split('-').join('_') + '/orderBook';
+      return symbol.split('-').join('_') + '/orderBook?limit=5';
     },
     apiOrderBookBidsPath: 'bids',
     apiOrderBookAsksPath: 'asks',
