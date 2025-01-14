@@ -364,6 +364,18 @@ const SYMBOLS = {
     coinw: 0.0906,
     poloniex: -1
   },
+  'USDC-USDT': {
+    pionex: 0.2,
+    binance: 0,
+    bybit: 0,
+    bitget: 0,
+    kucoin: 1,
+    htx: 1.2,
+    gateio: 0.5,
+    bingx: 0,
+    coinw: 5.34,
+    poloniex: 5
+  },
   'USDE-USDT': {
     bybit: 0,
     bitget: 4,
