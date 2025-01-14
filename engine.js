@@ -273,7 +273,7 @@ const SYMBOLS = {
   'LTC-USDT': {
     pionex: 0.0001,
     binance: 0.0001,
-    bybit: 0,
+    bybit: 0.0001,
     bitget: 0.001,
     kucoin: 0.008,
     htx: 0.001,
@@ -285,7 +285,7 @@ const SYMBOLS = {
   'ETC-USDT': {
     pionex: 0.004,
     binance: 0.004,
-    bybit: 0,
+    bybit: 0.01,
     bitget: 0.008,
     kucoin: 0.0157,
     htx: 0.01,
@@ -297,7 +297,7 @@ const SYMBOLS = {
   'AAVE-USDT': {
     pionex: 0.079,
     binance: 0.0024,
-    bybit: 0,
+    bybit: 0.025,
     bitget: 0.014,
     kucoin: 0.02,
     htx: 0.02,
@@ -309,7 +309,7 @@ const SYMBOLS = {
   'POL-USDT': {
     pionex: 0.08,
     binance: 0.08,
-    bybit: 0,
+    bybit: 0.2,
     bitget: 0.08,
     kucoin: 1.5,
     htx: 0.1,
@@ -331,7 +331,7 @@ const SYMBOLS = {
   'FIL-USDT': {
     pionex: 0.0005,
     binance: 0.0005,
-    bybit: 0,
+    bybit: 0.001,
     bitget: 0.0008,
     kucoin: 0.114,
     htx: 0.001,
@@ -343,7 +343,7 @@ const SYMBOLS = {
   'ALGO-USDT': {
     pionex: 0.008,
     binance: 0.008,
-    bybit: 0,
+    bybit: 0.01,
     bitget: 0.1,
     kucoin: 5.5,
     htx: 0.01,
@@ -367,7 +367,7 @@ const SYMBOLS = {
   'USDC-USDT': {
     pionex: 0.2,
     binance: 0,
-    bybit: 0,
+    bybit: 0.2,
     bitget: 0,
     kucoin: 1,
     htx: 1.2,
@@ -377,7 +377,7 @@ const SYMBOLS = {
     poloniex: 5
   },
   'USDE-USDT': {
-    bybit: 0,
+    bybit: 7,
     bitget: 4,
     kucoin: 10,
     gateio: 4.28,
@@ -385,7 +385,7 @@ const SYMBOLS = {
   },
   'DAI-USDT': {
     pionex: 7.52,
-    bybit: 0,
+    bybit: 0.8,
     bitget: 0.2,
     htx: 5.62,
     gateio: 0.5,
@@ -400,7 +400,7 @@ const SYMBOLS = {
     bingx: 0
   },
   'USDD-USDT': {
-    bybit: 0,
+    bybit: 2.6,
     kucoin: 1,
     htx: 0.5,
     gateio: 2.02,
@@ -408,7 +408,7 @@ const SYMBOLS = {
     poloniex: 1.5
   },
   'PYUSD-USDT': {
-    bybit: 0,
+    bybit: 4,
     bitget: 1.5,
     kucoin: 9,
     htx: 5.6348,
@@ -417,7 +417,7 @@ const SYMBOLS = {
   },
   'TUSD-USDT': {
     binance: 0.7,
-    bybit: 0,
+    bybit: 1,
     bitget: 0.7,
     kucoin: 0.3,
     htx: 1,
@@ -441,7 +441,7 @@ const SYMBOLS = {
   'PAXG-USDT': {
     pionex: -1,
     binance: 0.0022,
-    bybit: 0,
+    bybit: 0.0055,
     bitget: 0.00149926,
     kucoin: 0.006,
     bingx: 0,
