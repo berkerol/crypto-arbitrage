@@ -1,23 +1,104 @@
-/* global EXCHANGES SYMBOLS SYMBOL_GROUPS getBidAndAskFromExchange createElement */
+/* global EXCHANGES SYMBOLS SYMBOL_GROUPS getBidAndAskFromExchange getSymbolsFromExchange createElement createAlert */
+const base = 'USDT';
 const params = new URLSearchParams(window.location.search);
-const symbols = params.has('symbols') ? params.get('symbols') : 'XAUT-USDT';
-const symbolGroups = params.has('symbolGroups') ? params.get('symbolGroups') : '';
-const wait = params.has('wait') ? params.get('wait') === 'true' : false;
-if (symbolGroups !== '') {
-  if (symbolGroups.includes(',')) {
-    for (const symbolGroup of symbolGroups.split(',')) {
-      listAll(SYMBOL_GROUPS[symbolGroup], wait);
+const mode = params.has('mode') ? params.get('mode') : '';
+if (mode === 'triangular') {
+  listAllTriangularArbitrage();
+} else {
+  const symbols = params.has('symbols') ? params.get('symbols') : 'XAUT-USDT';
+  const symbolGroups = params.has('symbolGroups') ? params.get('symbolGroups') : '';
+  const wait = params.has('wait') ? params.get('wait') === 'true' : false;
+  if (symbolGroups !== '') {
+    if (symbolGroups.includes(',')) {
+      for (const symbolGroup of symbolGroups.split(',')) {
+        listAll(SYMBOL_GROUPS[symbolGroup], wait);
+      }
+    } else {
+      listAll(SYMBOL_GROUPS[symbolGroups], wait);
     }
   } else {
-    listAll(SYMBOL_GROUPS[symbolGroups], wait);
+    if (symbols === 'all') {
+      listAll(Object.keys(SYMBOLS), wait);
+    } else if (symbols.includes(',')) {
+      listAll(symbols.split(','), wait);
+    } else {
+      list(symbols);
+    }
   }
-} else {
-  if (symbols === 'all') {
-    listAll(Object.keys(SYMBOLS), wait);
-  } else if (symbols.includes(',')) {
-    listAll(symbols.split(','), wait);
+}
+
+async function listAllTriangularArbitrage () {
+  printTriangularArbitrage('started');
+  const promises = [];
+  for (const exchange of Object.values(EXCHANGES)) {
+    if ('apiSymbols' in exchange) {
+      const symbols = await getSymbolsFromExchange(exchange);
+      for (const currency of exchange.apiSymbols.currencies) {
+        promises.push(listTriangularArbitrage(exchange, false, currency, symbols));
+      }
+      for (const intermediateCoin of exchange.apiSymbols.intermediateCoins) {
+        promises.push(listTriangularArbitrage(exchange, true, intermediateCoin, symbols));
+      }
+    }
+  }
+  await Promise.all(promises);
+  printTriangularArbitrage('finished');
+}
+
+function printTriangularArbitrage (exchangeDetails, type, intermediate, coin, method, final, minSize) {
+  if (exchangeDetails === 'started') {
+    document.getElementById('searching').innerHTML = 'Searching';
+  } else if (exchangeDetails === 'finished') {
+    document.getElementById('searching').innerHTML = '';
   } else {
-    list(symbols);
+    if (isFinite(final)) {
+      const difference = final - 1;
+      const differencePercentage = difference * 100;
+      const profitPercentage = differencePercentage - 3 * exchangeDetails.fee;
+      const profit = profitPercentage * minSize / 100;
+      if (profit > 0) {
+        const summary = `Profit found with exchange ${exchangeDetails.displayName} and ${type} ${intermediate} using coin ${coin} and ${method}<br>${differencePercentage.toFixed(2)}% difference and ${profitPercentage.toFixed(2)}% profit<br>${profit.toFixed(2)} profit from size ${minSize.toFixed(2)}`;
+        createAlert('success', summary);
+      }
+    }
+  }
+}
+
+async function listTriangularArbitrage (exchange, isIntermediateCoin, intm, symbols) {
+  const baseIntmBidAndAsk = !isIntermediateCoin ? await getBidAndAskFromExchange(`${base}-${intm}`, exchange) : [];
+  const intmBaseBidAndAsk = isIntermediateCoin ? await getBidAndAskFromExchange(`${intm}-${base}`, exchange) : [];
+  for (const symbol of symbols) {
+    if (symbol[exchange.apiSymbols.baseAsset] !== base && symbol[exchange.apiSymbols.quoteAsset] === intm) {
+      const trgt = symbol[exchange.apiSymbols.baseAsset];
+      const trgtBaseBidAndAsk = await getBidAndAskFromExchange(`${trgt}-${base}`, exchange);
+      const trgtIntmBidAndAsk = await getBidAndAskFromExchange(`${trgt}-${intm}`, exchange);
+      if (trgtBaseBidAndAsk && trgtIntmBidAndAsk) {
+        const [trgtBaseBidPrice, trgtBaseBidSize, trgtBaseAskPrice, trgtBaseAskSize] = trgtBaseBidAndAsk;
+        const [trgtIntmBidPrice, trgtIntmBidSize, trgtIntmAskPrice, trgtIntmAskSize] = trgtIntmBidAndAsk;
+        const [baseIntmBidPrice, baseIntmBidSize, baseIntmAskPrice, baseIntmAskSize] = baseIntmBidAndAsk;
+        const [intmBaseBidPrice, intmBaseBidSize, intmBaseAskPrice, intmBaseAskSize] = intmBaseBidAndAsk;
+        let final1 = 1 // Start with 1 USDT
+        /* eslint-disable operator-linebreak */
+          / trgtBaseAskPrice // Buy COIN with USDT
+          * trgtIntmBidPrice; // Sell COIN for TRY/BNB
+        /* eslint-enable operator-linebreak */
+        final1 = !isIntermediateCoin
+          ? final1 / baseIntmAskPrice // Buy USDT with TRY
+          : final1 * intmBaseBidPrice; // Sell BNB for USDT
+        const minSize1 = Math.min(trgtBaseAskSize, trgtIntmBidSize, (!isIntermediateCoin ? baseIntmAskSize : intmBaseBidSize));
+        printTriangularArbitrage(exchange, !isIntermediateCoin ? 'currency' : 'intermediate coin', intm, trgt, 'method1', final1, minSize1);
+        let final2 = !isIntermediateCoin // Start with 1 USDT
+          ? 1 * baseIntmBidPrice // Sell USDT for TRY
+          : 1 / intmBaseAskPrice; // Buy BNB with USDT
+        final2 = final2
+        /* eslint-disable operator-linebreak */
+          / trgtIntmAskPrice // Buy COIN with TRY/BNB
+          * trgtBaseBidPrice; // Sell COIN for USDT
+        /* eslint-enable operator-linebreak */
+        const minSize2 = Math.min((!isIntermediateCoin ? baseIntmBidSize : intmBaseAskSize), trgtIntmAskSize, trgtBaseBidSize);
+        printTriangularArbitrage(exchange, !isIntermediateCoin ? 'currency' : 'intermediate coin', intm, trgt, 'method2', final2, minSize2);
+      }
+    }
   }
 }
 
