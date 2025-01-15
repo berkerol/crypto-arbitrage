@@ -66,8 +66,10 @@ async function listTriangularArbitrage (exchange, isIntermediateCoin, intm, symb
         const [baseIntmBidPrice, baseIntmBidSize, baseIntmAskPrice, baseIntmAskSize] = baseIntmBidAndAsk;
         const [intmBaseBidPrice, intmBaseBidSize, intmBaseAskPrice, intmBaseAskSize] = intmBaseBidAndAsk;
         let final1 = 1 // Start with 1 USDT
+        /* eslint-disable operator-linebreak */
           / trgtBaseAskPrice // Buy COIN with USDT
           * trgtIntmBidPrice; // Sell COIN for TRY/BNB
+        /* eslint-enable operator-linebreak */
         final1 = !isIntermediateCoin
           ? final1 / baseIntmAskPrice // Buy USDT with TRY
           : final1 * intmBaseBidPrice; // Sell BNB for USDT
@@ -77,8 +79,10 @@ async function listTriangularArbitrage (exchange, isIntermediateCoin, intm, symb
           ? 1 * baseIntmBidPrice // Sell USDT for TRY
           : 1 / intmBaseAskPrice; // Buy BNB with USDT
         final2 = final2
+        /* eslint-disable operator-linebreak */
           / trgtIntmAskPrice // Buy COIN with TRY/BNB
           * trgtBaseBidPrice; // Sell COIN for USDT
+        /* eslint-enable operator-linebreak */
         const minSize2 = Math.min((!isIntermediateCoin ? baseIntmBidSize : intmBaseAskSize), trgtIntmAskSize, trgtBaseBidSize);
         printTriangularArbitrage(exchange, !isIntermediateCoin ? 'currency' : 'intermediate coin', intm, trgt, 'method2', final2, minSize2);
       }
