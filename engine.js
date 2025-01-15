@@ -24,6 +24,14 @@ const EXCHANGES = {
       askPricePath: 'data.asks.0.0',
       askSizePath: 'data.asks.0.1'
     },
+    apiSymbols: {
+      url: '/api/v1/common/symbols',
+      symbolsPath: 'data.symbols',
+      currencies: [],
+      intermediateCoins: ['USDC', 'BTC', 'ETH'],
+      baseAsset: 'baseCurrency',
+      quoteAsset: 'quoteCurrency'
+    },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
     },
@@ -50,6 +58,14 @@ const EXCHANGES = {
       bidSizePath: 'bids.0.1',
       askPricePath: 'asks.0.0',
       askSizePath: 'asks.0.1'
+    },
+    apiSymbols: {
+      url: '/api/v3/exchangeInfo?symbolStatus=TRADING',
+      symbolsPath: 'symbols',
+      currencies: ['TRY', 'BRL'],
+      intermediateCoins: ['EUR', 'FDUSD', 'USDC', 'TUSD', 'BNB', 'BTC', 'ETH'],
+      baseAsset: 'baseAsset',
+      quoteAsset: 'quoteAsset'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
@@ -105,6 +121,14 @@ const EXCHANGES = {
       askPricePath: 'data.asks.0.0',
       askSizePath: 'data.asks.0.1'
     },
+    apiSymbols: {
+      url: '/api/v2/spot/public/symbols',
+      symbolsPath: 'data',
+      currencies: ['EUR', 'BRL'],
+      intermediateCoins: ['USDC', 'BTC', 'ETH'],
+      baseAsset: 'baseCoin',
+      quoteAsset: 'quoteCoin'
+    },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
     },
@@ -131,6 +155,14 @@ const EXCHANGES = {
       bidSizePath: 'data.bids.0.1',
       askPricePath: 'data.asks.0.0',
       askSizePath: 'data.asks.0.1'
+    },
+    apiSymbols: {
+      url: '/api/v2/symbols',
+      symbolsPath: 'data',
+      currencies: ['EUR', 'BRL'],
+      intermediateCoins: ['USDC', 'KCS', 'BTC', 'ETH'],
+      baseAsset: 'baseCurrency',
+      quoteAsset: 'quoteCurrency'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol;
@@ -159,6 +191,14 @@ const EXCHANGES = {
       askPricePath: 'tick.asks.0.0',
       askSizePath: 'tick.asks.0.1'
     },
+    apiSymbols: {
+      url: '/v2/settings/common/symbols',
+      symbolsPath: 'data',
+      currencies: [],
+      intermediateCoins: ['USDC', 'BTC', 'ETH'],
+      baseAsset: 'bc',
+      quoteAsset: 'qc'
+    },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('').toLowerCase();
     },
@@ -185,6 +225,14 @@ const EXCHANGES = {
       bidSizePath: 'bids.0.1',
       askPricePath: 'asks.0.0',
       askSizePath: 'asks.0.1'
+    },
+    apiSymbols: {
+      url: '/api/v4/spot/currency_pairs',
+      symbolsPath: '',
+      currencies: ['TRY'],
+      intermediateCoins: ['USDC', 'BTC', 'ETH'],
+      baseAsset: 'base',
+      quoteAsset: 'quote'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
@@ -261,6 +309,14 @@ const EXCHANGES = {
       bidSizePath: 'bid.0', // doesn't exist
       askPricePath: 'asks.0',
       askSizePath: 'ask.0' // doesn't exist
+    },
+    apiSymbols: {
+      url: '/markets',
+      symbolsPath: '',
+      currencies: ['USDC'],
+      intermediateCoins: ['USDD', 'TRX', 'BTC'],
+      baseAsset: 'baseCurrencyName',
+      quoteAsset: 'quoteCurrencyName'
     },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
@@ -489,4 +545,20 @@ async function getBidAndAskFromExchange (symbol, exchangeDetails) {
     }
   }
   return getBidAndAskFromApi(symbol, exchangeDetails, exchangeDetails.apiOrderBook);
+}
+
+async function getSymbolsFromExchange (exchangeDetails) {
+  try {
+    let res = await sendRequest(`${exchangeDetails.apiUrl}${exchangeDetails.apiSymbols.url}`);
+    if (exchangeDetails.apiSymbols.symbolsPath !== '') {
+      res = getBidOrAsk(exchangeDetails.apiSymbols.symbolsPath, res);
+    }
+    if (exchangeDetails.displayName === 'Gate.io') {
+      return res.filter(symbol => symbol.trade_status === 'tradable');
+    }
+    return res;
+  } catch (error) {
+    console.error(`Fetch error with all symbols and ${exchangeDetails.displayName}:`, error);
+    return null;
+  }
 }
