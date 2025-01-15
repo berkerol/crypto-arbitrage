@@ -57,7 +57,7 @@ const EXCHANGES = {
       intermediateCoins: ['EUR', 'FDUSD', 'USDC', 'TUSD', 'BNB', 'BTC', 'ETH'],
       baseAsset: 'baseAsset',
       quoteAsset: 'quoteAsset'
-  },
+    },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('');
     },
@@ -145,7 +145,7 @@ const EXCHANGES = {
       intermediateCoins: ['USDC', 'KCS', 'BTC', 'ETH'],
       baseAsset: 'baseCurrency',
       quoteAsset: 'quoteCurrency'
-  },
+    },
     getApiOrderBookSymbol: function (symbol) {
       return symbol;
     },
@@ -206,7 +206,7 @@ const EXCHANGES = {
       intermediateCoins: ['USDC', 'BTC', 'ETH'],
       baseAsset: 'base',
       quoteAsset: 'quote'
-  },
+    },
     getApiOrderBookSymbol: function (symbol) {
       return symbol.split('-').join('_');
     },
@@ -516,16 +516,16 @@ async function getSymbolsFromExchange (exchangeDetails) {
   try {
     let res = await sendRequest(`${exchangeDetails.apiUrl}${exchangeDetails.apiSymbols.url}`);
     if (exchangeDetails.displayName === 'Binance') {
-      res = res['symbols'];
+      res = res.symbols;
     } else if (exchangeDetails.displayName === 'KuCoin') {
-      res = res['data'];
+      res = res.data;
     }
     if (exchangeDetails.displayName === 'Gate.io') {
-      return res.filter(symbol => symbol['trade_status'] === 'tradable');
+      return res.filter(symbol => symbol.trade_status === 'tradable');
     }
     return res;
   } catch (error) {
-    console.error(`Fetch error:`, error);
+    console.error(`Fetch error with all symbols and ${exchangeDetails.displayName}:`, error);
     return null;
   }
 }
