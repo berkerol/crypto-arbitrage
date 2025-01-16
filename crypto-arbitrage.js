@@ -1,5 +1,4 @@
-/* global EXCHANGES SYMBOLS SYMBOL_GROUPS getBidAndAskFromExchange getSymbolsFromExchange createElement createAlert */
-const base = 'USDT';
+/* global EXCHANGES SYMBOLS SYMBOL_GROUPS listAll listAllTriangularArbitrage createElement createAlert */
 const params = new URLSearchParams(window.location.search);
 const mode = params.has('mode') ? params.get('mode') : '';
 if (mode === 'triangular') {
@@ -22,30 +21,16 @@ if (mode === 'triangular') {
     } else if (symbols.includes(',')) {
       listAll(symbols.split(','), wait);
     } else {
-      list(symbols);
+      listAll([symbols]);
     }
   }
 }
 
-async function listAllTriangularArbitrage () {
-  printTriangularArbitrage('started');
-  const promises = [];
-  for (const exchange of Object.values(EXCHANGES)) {
-    if ('apiSymbols' in exchange) {
-      const symbols = await getSymbolsFromExchange(exchange);
-      for (const currency of exchange.apiSymbols.currencies) {
-        promises.push(listTriangularArbitrage(exchange, false, currency, symbols));
-      }
-      for (const intermediateCoin of exchange.apiSymbols.intermediateCoins) {
-        promises.push(listTriangularArbitrage(exchange, true, intermediateCoin, symbols));
-      }
-    }
-  }
-  await Promise.all(promises);
-  printTriangularArbitrage('finished');
+async function sendRequest (url) { // eslint-disable-line no-unused-vars
+  return (await window.fetch(url, { headers: { Origin: 'https://berkerol.github.io' } })).json();
 }
 
-function printTriangularArbitrage (exchangeDetails, type, intermediate, coin, method, final, minSize, instructions) {
+function printTriangularArbitrage (exchangeDetails, type, intermediate, coin, method, final, minSize, instructions) { // eslint-disable-line no-unused-vars
   if (exchangeDetails === 'started') {
     document.getElementById('searching').innerHTML = 'Searching';
   } else if (exchangeDetails === 'finished') {
@@ -64,74 +49,6 @@ function printTriangularArbitrage (exchangeDetails, type, intermediate, coin, me
   }
 }
 
-async function listTriangularArbitrage (exchange, isIntermediateCoin, intm, symbols) {
-  const baseIntmBidAndAsk = !isIntermediateCoin ? await getBidAndAskFromExchange(`${base}-${intm}`, exchange) : [];
-  const intmBaseBidAndAsk = isIntermediateCoin ? await getBidAndAskFromExchange(`${intm}-${base}`, exchange) : [];
-  for (const symbol of symbols) {
-    if (symbol[exchange.apiSymbols.baseAsset] !== base && symbol[exchange.apiSymbols.quoteAsset] === intm) {
-      const trgt = symbol[exchange.apiSymbols.baseAsset];
-      const trgtBaseBidAndAsk = await getBidAndAskFromExchange(`${trgt}-${base}`, exchange);
-      const trgtIntmBidAndAsk = await getBidAndAskFromExchange(`${trgt}-${intm}`, exchange);
-      if ((isIntermediateCoin || baseIntmBidAndAsk) && (!isIntermediateCoin || intmBaseBidAndAsk) && trgtBaseBidAndAsk && trgtIntmBidAndAsk) {
-        const [trgtBaseBidPrice, trgtBaseBidSize, trgtBaseAskPrice, trgtBaseAskSize] = trgtBaseBidAndAsk;
-        const [trgtIntmBidPrice, trgtIntmBidSize, trgtIntmAskPrice, trgtIntmAskSize] = trgtIntmBidAndAsk;
-        const [baseIntmBidPrice, baseIntmBidSize, baseIntmAskPrice, baseIntmAskSize] = baseIntmBidAndAsk;
-        const [intmBaseBidPrice, intmBaseBidSize, intmBaseAskPrice, intmBaseAskSize] = intmBaseBidAndAsk;
-        let final1 = 1 // Start with 1 USDT
-        /* eslint-disable operator-linebreak */
-          / trgtBaseAskPrice // Buy COIN with USDT
-          * trgtIntmBidPrice; // Sell COIN for TRY/BNB
-        /* eslint-enable operator-linebreak */
-        final1 = !isIntermediateCoin
-          ? final1 / baseIntmAskPrice // Buy USDT with TRY
-          : final1 * intmBaseBidPrice; // Sell BNB for USDT
-        let size1 = !isIntermediateCoin
-          ? baseIntmAskSize
-          : intmBaseBidSize * intmBaseBidPrice;
-        const size1LastPart = !isIntermediateCoin
-          ? 1 / baseIntmBidPrice
-          : 1 * intmBaseBidPrice;
-        size1 = Math.min(Math.min(trgtBaseAskSize * trgtBaseAskPrice, trgtIntmBidSize * trgtIntmBidPrice * size1LastPart, size1));
-        let instructions1 = `Buy ${trgt} with ${base} from price ${trgtBaseAskPrice}<br>Sell ${trgt} for ${intm} from price ${trgtIntmBidPrice}<br>`;
-        instructions1 += !isIntermediateCoin
-          ? `Buy ${base} with ${intm} from price ${baseIntmAskPrice}`
-          : `Sell ${intm} for ${base} from price ${intmBaseBidPrice}`;
-        printTriangularArbitrage(exchange, !isIntermediateCoin ? 'currency' : 'intermediate coin', intm, trgt, 'method1', final1, size1, instructions1);
-        let final2 = !isIntermediateCoin // Start with 1 USDT
-          ? 1 * baseIntmBidPrice // Sell USDT for TRY
-          : 1 / intmBaseAskPrice; // Buy BNB with USDT
-        final2 = final2
-        /* eslint-disable operator-linebreak */
-          / trgtIntmAskPrice // Buy COIN with TRY/BNB
-          * trgtBaseBidPrice; // Sell COIN for USDT
-        /* eslint-enable operator-linebreak */
-        let size2 = !isIntermediateCoin
-          ? baseIntmBidSize
-          : intmBaseAskSize * intmBaseAskPrice;
-        const size2LastPart = !isIntermediateCoin
-          ? 1 / baseIntmAskPrice
-          : 1 * intmBaseAskPrice;
-        size2 = Math.min(Math.min(size2, trgtIntmAskSize * trgtIntmAskPrice * size2LastPart), trgtBaseBidSize * trgtBaseBidPrice);
-        let instructions2 = !isIntermediateCoin
-          ? `Sell ${base} for ${intm} from price ${baseIntmBidPrice}`
-          : `Buy ${intm} with ${base} from price ${intmBaseAskPrice}`;
-        instructions2 += `<br>Buy ${trgt} with ${intm} from price ${trgtIntmAskPrice}<br>Sell ${trgt} for ${base} from price ${trgtBaseBidPrice}`;
-        printTriangularArbitrage(exchange, !isIntermediateCoin ? 'currency' : 'intermediate coin', intm, trgt, 'method2', final2, size2, instructions2);
-      }
-    }
-  }
-}
-
-async function listAll (symbols, wait) {
-  for (const symbol of symbols) {
-    if (wait) {
-      await list(symbol);
-    } else {
-      list(symbol);
-    }
-  }
-}
-
 function getImageHtml (exchangeDetails) {
   const img = document.createElement('img');
   img.setAttribute('src', exchangeDetails.faviconUrl);
@@ -140,7 +57,7 @@ function getImageHtml (exchangeDetails) {
   return img.outerHTML;
 }
 
-function print (symbol, exchange, details) {
+function print (symbol, exchange, details) { // eslint-disable-line no-unused-vars
   let tbody = document.getElementById(symbol);
   if (exchange === undefined) {
     const h2 = createElement('h2', symbol, 'd-flex justify-content-center mt-3');
@@ -216,39 +133,4 @@ function print (symbol, exchange, details) {
     trSummary.appendChild(createElement('td', `${details.lowestBuy.price} on ${getImageHtml(lowestBuyExchangeDetails)} ${lowestBuyExchangeDetails.displayName} with ${lowestBuyExchangeDetails.fee}% fee`));
     tbody.appendChild(trSummary);
   }
-}
-
-async function list (symbol) {
-  print(symbol);
-  const result = {
-    highestSell: {
-      exchange: '',
-      price: 0,
-      size: 0
-    },
-    lowestBuy: {
-      exchange: '',
-      price: 100000000,
-      size: 0
-    }
-  };
-  for (const exchange of Object.keys(SYMBOLS[symbol])) {
-    const exchangeDetails = EXCHANGES[exchange];
-    const bidAndAsk = await getBidAndAskFromExchange(symbol, exchangeDetails);
-    if (bidAndAsk !== null) {
-      print(symbol, exchange, bidAndAsk);
-      const [bidPrice, bidSize, askPrice, askSize] = bidAndAsk;
-      if (bidPrice > result.highestSell.price) {
-        result.highestSell.exchange = exchange;
-        result.highestSell.price = bidPrice;
-        result.highestSell.size = bidSize;
-      }
-      if (askPrice < result.lowestBuy.price) {
-        result.lowestBuy.exchange = exchange;
-        result.lowestBuy.price = askPrice;
-        result.lowestBuy.size = askSize;
-      }
-    }
-  }
-  print(symbol, 'Summary', result);
 }

@@ -1,522 +1,6 @@
-/* eslint-disable no-unused-vars */
-// BIDS: buyers, green, highest to lowest
-// ASKS: sellers, red, lowest to highest
-const EXCHANGES = {
-  pionex: {
-    faviconUrl: 'https://www.pionex.com/favicon.ico',
-    displayName: 'Pionex',
-    webTradeUrl: 'https://www.pionex.com/en/trade/',
-    getWebTradeSymbol: function (symbol) {
-      return symbol.split('-').join('_');
-    },
-    apiUrl: 'https://api.pionex.com',
-    apiOrderBookTicker: {
-      url: '/api/v1/market/bookTickers?symbol=',
-      bidPricePath: 'data.tickers.0.bidPrice',
-      bidSizePath: 'data.tickers.0.bidSize',
-      askPricePath: 'data.tickers.0.askPrice',
-      askSizePath: 'data.tickers.0.askSize'
-    },
-    apiOrderBook: {
-      url: '/api/v1/market/depth?limit=1&symbol=',
-      bidPricePath: 'data.bids.0.0',
-      bidSizePath: 'data.bids.0.1',
-      askPricePath: 'data.asks.0.0',
-      askSizePath: 'data.asks.0.1'
-    },
-    apiSymbols: {
-      url: '/api/v1/common/symbols',
-      symbolsPath: 'data.symbols',
-      currencies: [],
-      intermediateCoins: ['USDC', 'BTC', 'ETH'],
-      baseAsset: 'baseCurrency',
-      quoteAsset: 'quoteCurrency'
-    },
-    getApiOrderBookSymbol: function (symbol) {
-      return symbol.split('-').join('_');
-    },
-    fee: 0.05
-  },
-  binance: {
-    faviconUrl: 'https://bin.bnbstatic.com/static/images/common/favicon.ico',
-    displayName: 'Binance',
-    webTradeUrl: 'https://www.binance.com/en/trade/',
-    getWebTradeSymbol: function (symbol) {
-      return symbol.split('-').join('_');
-    },
-    apiUrl: 'https://api.binance.com',
-    apiOrderBookTicker: {
-      url: '/api/v3/ticker/bookTicker?symbol=',
-      bidPricePath: 'bidPrice',
-      bidSizePath: 'bidQty',
-      askPricePath: 'askPrice',
-      askSizePath: 'askQty'
-    },
-    apiOrderBook: {
-      url: '/api/v3/depth?limit=1&symbol=',
-      bidPricePath: 'bids.0.0',
-      bidSizePath: 'bids.0.1',
-      askPricePath: 'asks.0.0',
-      askSizePath: 'asks.0.1'
-    },
-    apiSymbols: {
-      url: '/api/v3/exchangeInfo?symbolStatus=TRADING',
-      symbolsPath: 'symbols',
-      currencies: ['TRY', 'BRL'],
-      intermediateCoins: ['EUR', 'FDUSD', 'USDC', 'TUSD', 'BNB', 'BTC', 'ETH'],
-      baseAsset: 'baseAsset',
-      quoteAsset: 'quoteAsset'
-    },
-    getApiOrderBookSymbol: function (symbol) {
-      return symbol.split('-').join('');
-    },
-    fee: 0.1
-  },
-  bybit: {
-    faviconUrl: 'https://www.bybit.com/favicon.ico',
-    displayName: 'Bybit',
-    webTradeUrl: 'https://www.bybit.com/en/trade/spot/',
-    getWebTradeSymbol: function (symbol) {
-      return symbol.split('-').join('/');
-    },
-    apiUrl: 'https://api.bybit.com',
-    apiOrderBookTicker: {
-      url: '/v5/market/tickers?category=spot&symbol=',
-      bidPricePath: 'result.category.list.0.bid1Price',
-      bidSizePath: 'result.category.list.0.bid1Size',
-      askPricePath: 'result.category.list.0.ask1Price',
-      askSizePath: 'result.category.list.0.ask1Size'
-    },
-    apiOrderBook: {
-      url: '/v5/market/orderbook?category=spot&symbol=',
-      bidPricePath: 'result.b.0.0',
-      bidSizePath: 'result.b.0.1',
-      askPricePath: 'result.a.0.0',
-      askSizePath: 'result.a.0.1'
-    },
-    getApiOrderBookSymbol: function (symbol) {
-      return symbol.split('-').join('');
-    },
-    fee: 0.1
-  },
-  bitget: {
-    faviconUrl: 'https://www.bitget.com/baseasset/favicon4.png',
-    displayName: 'Bitget',
-    webTradeUrl: 'https://www.bitget.com/spot/',
-    getWebTradeSymbol: function (symbol) {
-      return symbol.split('-').join('');
-    },
-    apiUrl: 'https://api.bitget.com',
-    apiOrderBookTicker: {
-      url: '/api/v2/spot/market/tickers?symbol=',
-      bidPricePath: 'data.0.bidPr',
-      bidSizePath: 'data.0.bidSz',
-      askPricePath: 'data.0.askPr',
-      askSizePath: 'data.0.askSz'
-    },
-    apiOrderBook: {
-      url: '/api/v2/spot/market/orderbook?limit=1&symbol=',
-      bidPricePath: 'data.bids.0.0',
-      bidSizePath: 'data.bids.0.1',
-      askPricePath: 'data.asks.0.0',
-      askSizePath: 'data.asks.0.1'
-    },
-    apiSymbols: {
-      url: '/api/v2/spot/public/symbols',
-      symbolsPath: 'data',
-      currencies: ['EUR', 'BRL'],
-      intermediateCoins: ['USDC', 'BTC', 'ETH'],
-      baseAsset: 'baseCoin',
-      quoteAsset: 'quoteCoin'
-    },
-    getApiOrderBookSymbol: function (symbol) {
-      return symbol.split('-').join('');
-    },
-    fee: 0.1
-  },
-  kucoin: {
-    faviconUrl: 'https://www.kucoin.com/logo.png',
-    displayName: 'KuCoin',
-    webTradeUrl: 'https://www.kucoin.com/trade/',
-    getWebTradeSymbol: function (symbol) {
-      return symbol;
-    },
-    apiUrl: 'https://api.kucoin.com',
-    apiOrderBookTicker: {
-      url: '/api/v1/market/orderbook/level1?symbol=',
-      bidPricePath: 'data.bestBid',
-      bidSizePath: 'data.bestBidSize',
-      askPricePath: 'data.bestAsk',
-      askSizePath: 'data.bestAskSize'
-    },
-    apiOrderBook: {
-      url: '/api/v1/market/orderbook/level2_20?symbol=',
-      bidPricePath: 'data.bids.0.0',
-      bidSizePath: 'data.bids.0.1',
-      askPricePath: 'data.asks.0.0',
-      askSizePath: 'data.asks.0.1'
-    },
-    apiSymbols: {
-      url: '/api/v2/symbols',
-      symbolsPath: 'data',
-      currencies: ['EUR', 'BRL'],
-      intermediateCoins: ['USDC', 'KCS', 'BTC', 'ETH'],
-      baseAsset: 'baseCurrency',
-      quoteAsset: 'quoteCurrency'
-    },
-    getApiOrderBookSymbol: function (symbol) {
-      return symbol;
-    },
-    fee: 0.1
-  },
-  htx: {
-    faviconUrl: 'https://hbg-fed-static-prd.hbfile.net/enmarket/favicon.ico?exchange',
-    displayName: 'HTX',
-    webTradeUrl: 'https://www.htx.com/trade/',
-    getWebTradeSymbol: function (symbol) {
-      return symbol.split('-').join('_').toLowerCase();
-    },
-    apiUrl: 'https://api.huobi.pro',
-    apiOrderBookTicker: {
-      url: '/market/detail/merged?symbol=',
-      bidPricePath: 'tick.bid.0',
-      bidSizePath: 'tick.bid.1',
-      askPricePath: 'tick.ask.0',
-      askSizePath: 'tick.ask.1'
-    },
-    apiOrderBook: {
-      url: '/market/depth?type=step0&depth=5&symbol=',
-      bidPricePath: 'tick.bids.0.0',
-      bidSizePath: 'tick.bids.0.1',
-      askPricePath: 'tick.asks.0.0',
-      askSizePath: 'tick.asks.0.1'
-    },
-    apiSymbols: {
-      url: '/v2/settings/common/symbols',
-      symbolsPath: 'data',
-      currencies: [],
-      intermediateCoins: ['USDC', 'BTC', 'ETH'],
-      baseAsset: 'bc',
-      quoteAsset: 'qc'
-    },
-    getApiOrderBookSymbol: function (symbol) {
-      return symbol.split('-').join('').toLowerCase();
-    },
-    fee: 0.2
-  },
-  gateio: {
-    faviconUrl: 'https://www.gate.io/favicon.ico',
-    displayName: 'Gate.io',
-    webTradeUrl: 'https://www.gate.io/trade/',
-    getWebTradeSymbol: function (symbol) {
-      return symbol.split('-').join('_');
-    },
-    apiUrl: 'https://api.gateio.ws',
-    apiOrderBookTicker: {
-      url: '/api/v4/spot/tickers?currency_pair=',
-      bidPricePath: '0.highest_bid',
-      bidSizePath: '0.highest_size',
-      askPricePath: '0.lowest_ask',
-      askSizePath: '0.lowest_size'
-    },
-    apiOrderBook: {
-      url: '/api/v4/spot/order_book?limit=1&currency_pair=',
-      bidPricePath: 'bids.0.0',
-      bidSizePath: 'bids.0.1',
-      askPricePath: 'asks.0.0',
-      askSizePath: 'asks.0.1'
-    },
-    apiSymbols: {
-      url: '/api/v4/spot/currency_pairs',
-      symbolsPath: '',
-      currencies: ['TRY'],
-      intermediateCoins: ['USDC', 'BTC', 'ETH'],
-      baseAsset: 'base',
-      quoteAsset: 'quote'
-    },
-    getApiOrderBookSymbol: function (symbol) {
-      return symbol.split('-').join('_');
-    },
-    fee: 0.1
-  },
-  bingx: {
-    faviconUrl: 'https://bin.bb-os.com/favicon.png',
-    displayName: 'BingX',
-    webTradeUrl: 'https://bingx.com/en/spot/',
-    getWebTradeSymbol: function (symbol) {
-      return symbol;
-    },
-    apiUrl: 'https://open-api.bingx.com',
-    apiOrderBookTicker: {
-      url: '/openApi/spot/v1/ticker/bookTicker?symbol=',
-      bidPricePath: 'data.0.bidPrice',
-      bidSizePath: 'data.0.bidVolume',
-      askPricePath: 'data.0.askPrice',
-      askSizePath: 'data.0.askVolume'
-    },
-    apiOrderBook: {
-      url: '/openApi/spot/v1/market/depth?limit=1&symbol=',
-      bidPricePath: 'data.bids.0.0',
-      bidSizePath: 'data.bids.0.1',
-      askPricePath: 'data.asks.0.0',
-      askSizePath: 'data.asks.0.1'
-    },
-    getApiOrderBookSymbol: function (symbol) {
-      return symbol;
-    },
-    fee: 0.1
-  },
-  coinw: {
-    faviconUrl: 'https://www.coinw.com/favicon.ico',
-    displayName: 'CoinW',
-    webTradeUrl: 'https://www.coinw.com/spot/',
-    getWebTradeSymbol: function (symbol) {
-      return symbol.split('-').join('').toLowerCase();
-    },
-    apiUrl: 'https://api.coinw.com',
-    apiOrderBook: {
-      url: '/api/v1/public?command=returnOrderBook&symbol=',
-      bidPricePath: 'data.bids.0.0',
-      bidSizePath: 'data.bids.0.1',
-      askPricePath: 'data.asks.0.0',
-      askSizePath: 'data.asks.0.1'
-    },
-    getApiOrderBookSymbol: function (symbol) {
-      return symbol.split('-').join('_');
-    },
-    fee: 0.2
-  },
-  poloniex: {
-    faviconUrl: 'https://poloniex.com/favicon.ico',
-    displayName: 'Poloniex',
-    webTradeUrl: 'https://poloniex.com/trade/',
-    getWebTradeSymbol: function (symbol) {
-      return symbol.split('-').join('_');
-    },
-    apiUrl: 'https://api.poloniex.com',
-    apiOrderBookTicker: {
-      url: '/markets/',
-      parameters: '/ticker24h',
-      bidPricePath: 'bid',
-      bidSizePath: 'bidQuantity',
-      askPricePath: 'ask',
-      askSizePath: 'askQuantity'
-    },
-    apiOrderBook: {
-      url: '/markets/',
-      parameters: '/orderBook?limit=5',
-      bidPricePath: 'bids.0',
-      bidSizePath: 'bid.0', // doesn't exist
-      askPricePath: 'asks.0',
-      askSizePath: 'ask.0' // doesn't exist
-    },
-    apiSymbols: {
-      url: '/markets',
-      symbolsPath: '',
-      currencies: ['USDC'],
-      intermediateCoins: ['USDD', 'TRX', 'BTC'],
-      baseAsset: 'baseCurrencyName',
-      quoteAsset: 'quoteCurrencyName'
-    },
-    getApiOrderBookSymbol: function (symbol) {
-      return symbol.split('-').join('_');
-    },
-    fee: 0.2
-  }
-};
-
-const SYMBOLS = {
-  'LTC-USDT': {
-    pionex: 0.0001,
-    binance: 0.0001,
-    bybit: 0.0001,
-    bitget: 0.001,
-    kucoin: 0.008,
-    htx: 0.001,
-    gateio: 0.005,
-    bingx: 0,
-    coinw: 0.019,
-    poloniex: 0.01
-  },
-  'ETC-USDT': {
-    pionex: 0.004,
-    binance: 0.004,
-    bybit: 0.01,
-    bitget: 0.008,
-    kucoin: 0.0157,
-    htx: 0.01,
-    gateio: 0.0208,
-    bingx: 0,
-    coinw: 0.074,
-    poloniex: 0.0437
-  },
-  'AAVE-USDT': {
-    pionex: 0.079,
-    binance: 0.0024,
-    bybit: 0.025,
-    bitget: 0.014,
-    kucoin: 0.02,
-    htx: 0.02,
-    gateio: 0.017,
-    bingx: 0,
-    coinw: 0.020,
-    poloniex: 0.042
-  },
-  'POL-USDT': {
-    pionex: 0.08,
-    binance: 0.08,
-    bybit: 0.2,
-    bitget: 0.08,
-    kucoin: 1.5,
-    htx: 0.1,
-    gateio: 1.13,
-    bingx: 0,
-    coinw: 0,
-    poloniex: 6.4
-  },
-  'VET-USDT': {
-    pionex: -1,
-    binance: 3,
-    bitget: 3,
-    kucoin: 20,
-    htx: 20,
-    gateio: 11.48,
-    bingx: 0,
-    coinw: 100
-  },
-  'FIL-USDT': {
-    pionex: 0.0005,
-    binance: 0.0005,
-    bybit: 0.001,
-    bitget: 0.0008,
-    kucoin: 0.114,
-    htx: 0.001,
-    gateio: 0.0989,
-    bingx: 0,
-    coinw: 0.1,
-    poloniex: 0.001
-  },
-  'ALGO-USDT': {
-    pionex: 0.008,
-    binance: 0.008,
-    bybit: 0.01,
-    bitget: 0.1,
-    kucoin: 5.5,
-    htx: 0.01,
-    gateio: 1.44,
-    bingx: 0,
-    coinw: 0.5
-  },
-  'CRO-USDT': {
-    pionex: -1,
-    bitget: 1,
-    kucoin: 3,
-    gateio: 3.76
-  },
-  'OKB-USDT': {
-    pionex: -1,
-    gateio: 0.0946,
-    bingx: 0,
-    coinw: 0.0906,
-    poloniex: -1
-  },
-  'USDC-USDT': {
-    pionex: 0.2,
-    binance: 0,
-    bybit: 0.2,
-    bitget: 0,
-    kucoin: 1,
-    htx: 1.2,
-    gateio: 0.5,
-    bingx: 0,
-    coinw: 5.34,
-    poloniex: 5
-  },
-  'USDE-USDT': {
-    bybit: 7,
-    bitget: 4,
-    kucoin: 10,
-    gateio: 4.28,
-    poloniex: 21.34
-  },
-  'DAI-USDT': {
-    pionex: 7.52,
-    bybit: 0.8,
-    bitget: 0.2,
-    htx: 5.62,
-    gateio: 0.5,
-    bingx: 0,
-    coinw: 3.41,
-    poloniex: 2.02
-  },
-  'FDUSD-USDT': {
-    binance: 0,
-    bitget: 0,
-    gateio: 0.5,
-    bingx: 0
-  },
-  'USDD-USDT': {
-    bybit: 2.6,
-    kucoin: 1,
-    htx: 0.5,
-    gateio: 2.02,
-    coinw: 1.92,
-    poloniex: 1.5
-  },
-  'PYUSD-USDT': {
-    bybit: 4,
-    bitget: 1.5,
-    kucoin: 9,
-    htx: 5.6348,
-    gateio: 4.32,
-    bingx: 0
-  },
-  'TUSD-USDT': {
-    binance: 0.7,
-    bybit: 1,
-    bitget: 0.7,
-    kucoin: 0.3,
-    htx: 1,
-    gateio: 2,
-    bingx: 0,
-    poloniex: 2
-  },
-  'EURT-USDT': {
-    htx: 5.4916,
-    gateio: 4.27,
-    bingx: 0,
-    coinw: 3.96
-  },
-  'XAUT-USDT': {
-    bitget: 0.00151849,
-    htx: 0.002111,
-    gateio: 0.00161,
-    bingx: 0,
-    coinw: 0.000954
-  },
-  'PAXG-USDT': {
-    pionex: -1,
-    binance: 0.0022,
-    bybit: 0.0055,
-    bitget: 0.00149926,
-    kucoin: 0.006,
-    bingx: 0,
-    coinw: 0.001797
-  }
-};
-
-const SYMBOL_GROUPS = {
-  exchangeTokens: ['CRO-USDT', 'OKB-USDT'],
-  stablecoins: ['USDC-USDT', 'USDE-USDT', 'DAI-USDT', 'FDUSD-USDT', 'USDD-USDT', 'PYUSD-USDT', 'TUSD-USDT', 'EURT-USDT'],
-  goldCoins: ['XAUT-USDT', 'PAXG-USDT']
-};
-
+/* global EXCHANGES SYMBOLS sendRequest print printTriangularArbitrage */
 function getBidOrAsk (path, res) {
   return path.split('.').reduce((obj, key) => obj && obj[key], res);
-}
-
-async function sendRequest (url) {
-  return (await window.fetch(url, { headers: { Origin: 'https://berkerol.github.io' } })).json();
 }
 
 async function getBidAndAskFromApi (symbol, exchangeDetails, exchangeApiDetails) {
@@ -561,4 +45,125 @@ async function getSymbolsFromExchange (exchangeDetails) {
     console.error(`Fetch error with all symbols and ${exchangeDetails.displayName}:`, error);
     return null;
   }
+}
+
+async function list (symbol) {
+  print(symbol);
+  const result = {
+    highestSell: {
+      exchange: '',
+      price: 0,
+      size: 0
+    },
+    lowestBuy: {
+      exchange: '',
+      price: 100000000,
+      size: 0
+    }
+  };
+  for (const exchange of Object.keys(SYMBOLS[symbol])) {
+    const exchangeDetails = EXCHANGES[exchange];
+    const bidAndAsk = await getBidAndAskFromExchange(symbol, exchangeDetails);
+    if (bidAndAsk !== null) {
+      print(symbol, exchange, bidAndAsk);
+      const [bidPrice, bidSize, askPrice, askSize] = bidAndAsk;
+      if (bidPrice > result.highestSell.price) {
+        result.highestSell.exchange = exchange;
+        result.highestSell.price = bidPrice;
+        result.highestSell.size = bidSize;
+      }
+      if (askPrice < result.lowestBuy.price) {
+        result.lowestBuy.exchange = exchange;
+        result.lowestBuy.price = askPrice;
+        result.lowestBuy.size = askSize;
+      }
+    }
+  }
+  print(symbol, 'Summary', result);
+}
+
+async function listTriangularArbitrage (exchange, isIntermediateCoin, base, intm, symbols) {
+  const baseIntmBidAndAsk = !isIntermediateCoin ? await getBidAndAskFromExchange(`${base}-${intm}`, exchange) : [];
+  const intmBaseBidAndAsk = isIntermediateCoin ? await getBidAndAskFromExchange(`${intm}-${base}`, exchange) : [];
+  for (const symbol of symbols) {
+    if (symbol[exchange.apiSymbols.baseAsset] !== base && symbol[exchange.apiSymbols.quoteAsset] === intm) {
+      const trgt = symbol[exchange.apiSymbols.baseAsset];
+      const trgtBaseBidAndAsk = await getBidAndAskFromExchange(`${trgt}-${base}`, exchange);
+      const trgtIntmBidAndAsk = await getBidAndAskFromExchange(`${trgt}-${intm}`, exchange);
+      if ((isIntermediateCoin || baseIntmBidAndAsk) && (!isIntermediateCoin || intmBaseBidAndAsk) && trgtBaseBidAndAsk && trgtIntmBidAndAsk) {
+        const [trgtBaseBidPrice, trgtBaseBidSize, trgtBaseAskPrice, trgtBaseAskSize] = trgtBaseBidAndAsk;
+        const [trgtIntmBidPrice, trgtIntmBidSize, trgtIntmAskPrice, trgtIntmAskSize] = trgtIntmBidAndAsk;
+        const [baseIntmBidPrice, baseIntmBidSize, baseIntmAskPrice, baseIntmAskSize] = baseIntmBidAndAsk;
+        const [intmBaseBidPrice, intmBaseBidSize, intmBaseAskPrice, intmBaseAskSize] = intmBaseBidAndAsk;
+        let final1 = 1 // Start with 1 USDT
+        // eslint-disable-next-line operator-linebreak
+          / trgtBaseAskPrice // Buy COIN with USDT
+        // eslint-disable-next-line operator-linebreak
+          * trgtIntmBidPrice; // Sell COIN for TRY/BNB
+        final1 = !isIntermediateCoin
+          ? final1 / baseIntmAskPrice // Buy USDT with TRY
+          : final1 * intmBaseBidPrice; // Sell BNB for USDT
+        let size1 = !isIntermediateCoin
+          ? baseIntmAskSize
+          : intmBaseBidSize * intmBaseBidPrice;
+        const size1LastPart = !isIntermediateCoin
+          ? 1 / baseIntmBidPrice
+          : 1 * intmBaseBidPrice;
+        size1 = Math.min(Math.min(trgtBaseAskSize * trgtBaseAskPrice, trgtIntmBidSize * trgtIntmBidPrice * size1LastPart, size1));
+        let instructions1 = `Buy ${trgt} with ${base} from price ${trgtBaseAskPrice}<br>Sell ${trgt} for ${intm} from price ${trgtIntmBidPrice}<br>`;
+        instructions1 += !isIntermediateCoin
+          ? `Buy ${base} with ${intm} from price ${baseIntmAskPrice}`
+          : `Sell ${intm} for ${base} from price ${intmBaseBidPrice}`;
+        printTriangularArbitrage(exchange, !isIntermediateCoin ? 'currency' : 'intermediate coin', intm, trgt, 'method1', final1, size1, instructions1);
+        let final2 = !isIntermediateCoin // Start with 1 USDT
+          ? 1 * baseIntmBidPrice // Sell USDT for TRY
+          : 1 / intmBaseAskPrice; // Buy BNB with USDT
+        final2 = final2
+        // eslint-disable-next-line operator-linebreak
+          / trgtIntmAskPrice // Buy COIN with TRY/BNB
+        // eslint-disable-next-line operator-linebreak
+          * trgtBaseBidPrice; // Sell COIN for USDT
+        let size2 = !isIntermediateCoin
+          ? baseIntmBidSize
+          : intmBaseAskSize * intmBaseAskPrice;
+        const size2LastPart = !isIntermediateCoin
+          ? 1 / baseIntmAskPrice
+          : 1 * intmBaseAskPrice;
+        size2 = Math.min(Math.min(size2, trgtIntmAskSize * trgtIntmAskPrice * size2LastPart), trgtBaseBidSize * trgtBaseBidPrice);
+        let instructions2 = !isIntermediateCoin
+          ? `Sell ${base} for ${intm} from price ${baseIntmBidPrice}`
+          : `Buy ${intm} with ${base} from price ${intmBaseAskPrice}`;
+        instructions2 += `<br>Buy ${trgt} with ${intm} from price ${trgtIntmAskPrice}<br>Sell ${trgt} for ${base} from price ${trgtBaseBidPrice}`;
+        printTriangularArbitrage(exchange, !isIntermediateCoin ? 'currency' : 'intermediate coin', intm, trgt, 'method2', final2, size2, instructions2);
+      }
+    }
+  }
+}
+
+async function listAll (symbols, wait) { // eslint-disable-line no-unused-vars
+  for (const symbol of symbols) {
+    if (wait) {
+      await list(symbol);
+    } else {
+      list(symbol);
+    }
+  }
+}
+
+async function listAllTriangularArbitrage () { // eslint-disable-line no-unused-vars
+  printTriangularArbitrage('started');
+  const promises = [];
+  for (const exchange of Object.values(EXCHANGES)) {
+    if ('apiSymbols' in exchange) {
+      const symbols = await getSymbolsFromExchange(exchange);
+      for (const currency of exchange.apiSymbols.currencies) {
+        promises.push(listTriangularArbitrage(exchange, false, 'USDT', currency, symbols));
+      }
+      for (const intermediateCoin of exchange.apiSymbols.intermediateCoins) {
+        promises.push(listTriangularArbitrage(exchange, true, 'USDT', intermediateCoin, symbols));
+      }
+    }
+  }
+  await Promise.all(promises);
+  printTriangularArbitrage('finished');
 }
