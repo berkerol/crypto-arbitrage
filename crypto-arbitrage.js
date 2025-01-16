@@ -177,24 +177,23 @@ function print (symbol, exchange, details) {
     tr.appendChild(createElement('td', `${askPrice} with size ${askSize}`));
     tbody.appendChild(tr);
   } else {
-    const [highestSellExchange, highestSellPrice, highestSellSize, lowestBuyExchange, lowestBuyPrice, lowestBuySize] = details;
-    const highestSellExchangeDetails = EXCHANGES[highestSellExchange];
-    const lowestBuyExchangeDetails = EXCHANGES[lowestBuyExchange];
+    const highestSellExchangeDetails = EXCHANGES[details.highestSell.exchange];
+    const lowestBuyExchangeDetails = EXCHANGES[details.lowestBuy.exchange];
     let tableColor = 'table-danger';
     let summary = 'Summary: No arbitrage';
-    if (highestSellPrice > lowestBuyPrice) {
-      const differencePercentage = (highestSellPrice - lowestBuyPrice) / lowestBuyPrice * 100;
+    if (details.highestSell.price > details.lowestBuy.price) {
+      const differencePercentage = (details.highestSell.price - details.lowestBuy.price) / details.lowestBuy.price * 100;
       const totalFee = highestSellExchangeDetails.fee + lowestBuyExchangeDetails.fee;
       const profitPercentage = differencePercentage - totalFee;
-      const minSize = Math.min(highestSellSize, lowestBuySize);
+      const minSize = Math.min(details.highestSell.size, details.lowestBuy.size);
       const profit = profitPercentage * minSize / 100;
-      let withdrawalFee = SYMBOLS[symbol][lowestBuyExchange];
+      let withdrawalFee = SYMBOLS[symbol][details.lowestBuy.exchange];
       let isWithdrawPossible = true;
       if (withdrawalFee === -1) {
         withdrawalFee = 0;
         isWithdrawPossible = false;
       } else {
-        withdrawalFee *= lowestBuyPrice;
+        withdrawalFee *= details.lowestBuy.price;
       }
       const profitAfterWithdrawalFee = profit - withdrawalFee;
       tableColor = 'table-warning';
@@ -213,37 +212,43 @@ function print (symbol, exchange, details) {
     }
     const trSummary = createElement('tr', '', tableColor);
     trSummary.appendChild(createElement('td', summary));
-    trSummary.appendChild(createElement('td', `${highestSellPrice} on ${getImageHtml(highestSellExchangeDetails)} ${highestSellExchangeDetails.displayName} with ${highestSellExchangeDetails.fee}% fee`));
-    trSummary.appendChild(createElement('td', `${lowestBuyPrice} on ${getImageHtml(lowestBuyExchangeDetails)} ${lowestBuyExchangeDetails.displayName} with ${lowestBuyExchangeDetails.fee}% fee`));
+    trSummary.appendChild(createElement('td', `${details.highestSell.price} on ${getImageHtml(highestSellExchangeDetails)} ${highestSellExchangeDetails.displayName} with ${highestSellExchangeDetails.fee}% fee`));
+    trSummary.appendChild(createElement('td', `${details.lowestBuy.price} on ${getImageHtml(lowestBuyExchangeDetails)} ${lowestBuyExchangeDetails.displayName} with ${lowestBuyExchangeDetails.fee}% fee`));
     tbody.appendChild(trSummary);
   }
 }
 
 async function list (symbol) {
   print(symbol);
-  let highestSellExchange = '';
-  let highestSellPrice = 0;
-  let highestSellSize = 0;
-  let lowestBuyExchange = '';
-  let lowestBuyPrice = 100000000;
-  let lowestBuySize = 0;
+  const result = {
+    highestSell: {
+      exchange: '',
+      price: 0,
+      size: 0
+    },
+    lowestBuy: {
+      exchange: '',
+      price: 100000000,
+      size: 0
+    }
+  };
   for (const exchange of Object.keys(SYMBOLS[symbol])) {
     const exchangeDetails = EXCHANGES[exchange];
     const bidAndAsk = await getBidAndAskFromExchange(symbol, exchangeDetails);
     if (bidAndAsk !== null) {
       print(symbol, exchange, bidAndAsk);
       const [bidPrice, bidSize, askPrice, askSize] = bidAndAsk;
-      if (bidPrice > highestSellPrice) {
-        highestSellExchange = exchange;
-        highestSellPrice = bidPrice;
-        highestSellSize = bidSize;
+      if (bidPrice > result.highestSell.price) {
+        result.highestSell.exchange = exchange;
+        result.highestSell.price = bidPrice;
+        result.highestSell.size = bidSize;
       }
-      if (askPrice < lowestBuyPrice) {
-        lowestBuyExchange = exchange;
-        lowestBuyPrice = askPrice;
-        lowestBuySize = askSize;
+      if (askPrice < result.lowestBuy.price) {
+        result.lowestBuy.exchange = exchange;
+        result.lowestBuy.price = askPrice;
+        result.lowestBuy.size = askSize;
       }
     }
   }
-  print(symbol, 'Summary', [highestSellExchange, highestSellPrice, highestSellSize, lowestBuyExchange, lowestBuyPrice, lowestBuySize]);
+  print(symbol, 'Summary', result);
 }
