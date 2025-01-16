@@ -140,22 +140,87 @@ function getImageHtml (exchangeDetails) {
   return img.outerHTML;
 }
 
+function print (symbol, exchange, details) {
+  let tbody = document.getElementById(symbol);
+  if (exchange === undefined) {
+    const h2 = createElement('h2', symbol, 'd-flex justify-content-center mt-3');
+    document.getElementsByClassName('container')[0].appendChild(h2);
+    const div = createElement('div', '', 'd-flex justify-content-center mt-3');
+    document.getElementsByClassName('container')[0].appendChild(div);
+    const table = createElement('table', '', 'table table-striped table-hover');
+    const thead = document.createElement('thead');
+    const trHeader = document.createElement('tr');
+    trHeader.appendChild(createElement('th', 'Exchange'));
+    trHeader.appendChild(createElement('th', 'Highest Sell'));
+    trHeader.appendChild(createElement('th', 'Lowest Buy'));
+    thead.appendChild(trHeader);
+    table.appendChild(thead);
+    tbody = document.createElement('tbody');
+    tbody.setAttribute('id', symbol);
+    table.appendChild(tbody);
+    div.appendChild(table);
+  } else if (exchange !== 'Summary') {
+    const exchangeDetails = EXCHANGES[exchange];
+    const tr = document.createElement('tr');
+    const i = document.createElement('i');
+    i.setAttribute('class', 'fas fa-external-link-alt');
+    const a = document.createElement('a');
+    a.setAttribute('target', '_blank');
+    a.setAttribute('rel', 'noopener noreferrer');
+    a.setAttribute('href', `${exchangeDetails.webTradeUrl}${exchangeDetails.getWebTradeSymbol(symbol)}`);
+    a.appendChild(i);
+    const td = createElement('td', `${getImageHtml(exchangeDetails)} ${exchangeDetails.displayName} `);
+    td.appendChild(a);
+    tr.appendChild(td);
+    const [bidPrice, bidSize, askPrice, askSize] = details;
+    tr.appendChild(createElement('td', `${bidPrice} with size ${bidSize}`));
+    tr.appendChild(createElement('td', `${askPrice} with size ${askSize}`));
+    tbody.appendChild(tr);
+  } else {
+    const [highestSellExchange, highestSellPrice, highestSellSize, lowestBuyExchange, lowestBuyPrice, lowestBuySize] = details;
+    const highestSellExchangeDetails = EXCHANGES[highestSellExchange];
+    const lowestBuyExchangeDetails = EXCHANGES[lowestBuyExchange];
+    let tableColor = 'table-danger';
+    let summary = 'Summary: No arbitrage';
+    if (highestSellPrice > lowestBuyPrice) {
+      const differencePercentage = (highestSellPrice - lowestBuyPrice) / lowestBuyPrice * 100;
+      const totalFee = highestSellExchangeDetails.fee + lowestBuyExchangeDetails.fee;
+      const profitPercentage = differencePercentage - totalFee;
+      const minSize = Math.min(highestSellSize, lowestBuySize);
+      const profit = profitPercentage * minSize / 100;
+      let withdrawalFee = SYMBOLS[symbol][lowestBuyExchange];
+      let isWithdrawPossible = true;
+      if (withdrawalFee === -1) {
+        withdrawalFee = 0;
+        isWithdrawPossible = false;
+      } else {
+        withdrawalFee *= lowestBuyPrice;
+      }
+      const profitAfterWithdrawalFee = profit - withdrawalFee;
+      tableColor = 'table-warning';
+      summary = `Summary: Possible arbitrage with ${differencePercentage.toFixed(2)}% difference and ${profitPercentage.toFixed(2)}% profit`;
+      if (profit > 0) {
+        tableColor = 'table-primary';
+        summary += `<br>${profit.toFixed(2)} profit from size ${minSize.toFixed(2)}`;
+        if (!isWithdrawPossible) {
+          summary += '<br>Withdrawal not possible';
+        }
+      }
+      if (profitAfterWithdrawalFee > 0 && isWithdrawPossible) {
+        tableColor = 'table-success';
+        summary += `<br>Profit after withdrawal fee: ${profitAfterWithdrawalFee.toFixed(2)} with withdrawal fee: ${withdrawalFee.toFixed(2)}`;
+      }
+    }
+    const trSummary = createElement('tr', '', tableColor);
+    trSummary.appendChild(createElement('td', summary));
+    trSummary.appendChild(createElement('td', `${highestSellPrice} on ${getImageHtml(highestSellExchangeDetails)} ${highestSellExchangeDetails.displayName} with ${highestSellExchangeDetails.fee}% fee`));
+    trSummary.appendChild(createElement('td', `${lowestBuyPrice} on ${getImageHtml(lowestBuyExchangeDetails)} ${lowestBuyExchangeDetails.displayName} with ${lowestBuyExchangeDetails.fee}% fee`));
+    tbody.appendChild(trSummary);
+  }
+}
+
 async function list (symbol) {
-  const h2 = createElement('h2', symbol, 'd-flex justify-content-center mt-3');
-  document.getElementsByClassName('container')[0].appendChild(h2);
-  const div = createElement('div', '', 'd-flex justify-content-center mt-3');
-  document.getElementsByClassName('container')[0].appendChild(div);
-  const table = createElement('table', '', 'table table-striped table-hover');
-  const thead = document.createElement('thead');
-  const trHeader = document.createElement('tr');
-  trHeader.appendChild(createElement('th', 'Exchange'));
-  trHeader.appendChild(createElement('th', 'Highest Sell'));
-  trHeader.appendChild(createElement('th', 'Lowest Buy'));
-  thead.appendChild(trHeader);
-  table.appendChild(thead);
-  const tbody = document.createElement('tbody');
-  table.appendChild(tbody);
-  div.appendChild(table);
+  print(symbol);
   let highestSellExchange = '';
   let highestSellPrice = 0;
   let highestSellSize = 0;
@@ -166,69 +231,19 @@ async function list (symbol) {
     const exchangeDetails = EXCHANGES[exchange];
     const bidAndAsk = await getBidAndAskFromExchange(symbol, exchangeDetails);
     if (bidAndAsk !== null) {
-      const tr = document.createElement('tr');
-      const i = document.createElement('i');
-      i.setAttribute('class', 'fas fa-external-link-alt');
-      const a = document.createElement('a');
-      a.setAttribute('target', '_blank');
-      a.setAttribute('rel', 'noopener noreferrer');
-      a.setAttribute('href', `${exchangeDetails.webTradeUrl}${exchangeDetails.getWebTradeSymbol(symbol)}`);
-      a.appendChild(i);
-      const td = createElement('td', `${getImageHtml(exchangeDetails)} ${exchangeDetails.displayName} `);
-      td.appendChild(a);
-      tr.appendChild(td);
+      print(symbol, exchange, bidAndAsk);
       const [bidPrice, bidSize, askPrice, askSize] = bidAndAsk;
-      tr.appendChild(createElement('td', `${bidPrice} with size ${bidSize}`));
       if (bidPrice > highestSellPrice) {
         highestSellExchange = exchange;
         highestSellPrice = bidPrice;
         highestSellSize = bidSize;
       }
-      tr.appendChild(createElement('td', `${askPrice} with size ${askSize}`));
       if (askPrice < lowestBuyPrice) {
         lowestBuyExchange = exchange;
         lowestBuyPrice = askPrice;
         lowestBuySize = askSize;
       }
-      tbody.appendChild(tr);
     }
   }
-  const highestSellExchangeDetails = EXCHANGES[highestSellExchange];
-  const lowestBuyExchangeDetails = EXCHANGES[lowestBuyExchange];
-  let tableColor = 'table-danger';
-  let summary = 'Summary: No arbitrage';
-  if (highestSellPrice > lowestBuyPrice) {
-    const differencePercentage = (highestSellPrice - lowestBuyPrice) / lowestBuyPrice * 100;
-    const totalFee = highestSellExchangeDetails.fee + lowestBuyExchangeDetails.fee;
-    const profitPercentage = differencePercentage - totalFee;
-    const minSize = Math.min(highestSellSize, lowestBuySize);
-    const profit = profitPercentage * minSize / 100;
-    let withdrawalFee = SYMBOLS[symbol][lowestBuyExchange];
-    let isWithdrawPossible = true;
-    if (withdrawalFee === -1) {
-      withdrawalFee = 0;
-      isWithdrawPossible = false;
-    } else {
-      withdrawalFee *= lowestBuyPrice;
-    }
-    const profitAfterWithdrawalFee = profit - withdrawalFee;
-    tableColor = 'table-warning';
-    summary = `Summary: Possible arbitrage with ${differencePercentage.toFixed(2)}% difference and ${profitPercentage.toFixed(2)}% profit`;
-    if (profit > 0) {
-      tableColor = 'table-primary';
-      summary += `<br>${profit.toFixed(2)} profit from size ${minSize.toFixed(2)}`;
-      if (!isWithdrawPossible) {
-        summary += '<br>Withdrawal not possible';
-      }
-    }
-    if (profitAfterWithdrawalFee > 0 && isWithdrawPossible) {
-      tableColor = 'table-success';
-      summary += `<br>Profit after withdrawal fee: ${profitAfterWithdrawalFee.toFixed(2)} with withdrawal fee: ${withdrawalFee.toFixed(2)}`;
-    }
-  }
-  const trSummary = createElement('tr', '', tableColor);
-  trSummary.appendChild(createElement('td', summary));
-  trSummary.appendChild(createElement('td', `${highestSellPrice} on ${getImageHtml(highestSellExchangeDetails)} ${highestSellExchangeDetails.displayName} with ${highestSellExchangeDetails.fee}% fee`));
-  trSummary.appendChild(createElement('td', `${lowestBuyPrice} on ${getImageHtml(lowestBuyExchangeDetails)} ${lowestBuyExchangeDetails.displayName} with ${lowestBuyExchangeDetails.fee}% fee`));
-  tbody.appendChild(trSummary);
+  print(symbol, 'Summary', [highestSellExchange, highestSellPrice, highestSellSize, lowestBuyExchange, lowestBuyPrice, lowestBuySize]);
 }
