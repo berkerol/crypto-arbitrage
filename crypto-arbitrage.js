@@ -30,22 +30,14 @@ async function sendRequest (url) { // eslint-disable-line no-unused-vars
   return (await window.fetch(url, { headers: { Origin: 'https://berkerol.github.io' } })).json();
 }
 
-function printTriangularArbitrage (exchangeDetails, type, intermediate, coin, method, final, minSize, instructions) { // eslint-disable-line no-unused-vars
+function printTriangularArbitrage (exchangeDetails, type, intermediate, coin, method, differencePercentage, profitPercentage, profit, minSize, instructions) { // eslint-disable-line no-unused-vars
   if (exchangeDetails === 'started') {
     document.getElementById('searching').innerHTML = 'Searching';
   } else if (exchangeDetails === 'finished') {
     document.getElementById('searching').innerHTML = '';
   } else {
-    if (isFinite(final)) {
-      const difference = final - 1;
-      const differencePercentage = difference * 100;
-      const profitPercentage = differencePercentage - 3 * exchangeDetails.fee;
-      const profit = profitPercentage * minSize / 100;
-      if (profit > 0) {
-        const summary = `Profit found with exchange ${exchangeDetails.displayName} and ${type} ${intermediate} using coin ${coin} and ${method}<br>${differencePercentage.toFixed(2)}% difference and ${profitPercentage.toFixed(2)}% profit<br>${profit.toFixed(2)} profit from size ${minSize.toFixed(2)}<br>${instructions}`;
-        createAlert('success', summary);
-      }
-    }
+    const summary = `Profit found with exchange ${exchangeDetails.displayName} and ${type} ${intermediate} using coin ${coin} and ${method}<br>${differencePercentage.toFixed(2)}% difference and ${profitPercentage.toFixed(2)}% profit<br>${profit.toFixed(2)} profit from size ${minSize.toFixed(2)}<br>${instructions}`;
+    createAlert('success', summary);
   }
 }
 
@@ -98,33 +90,19 @@ function print (symbol, exchange, details) { // eslint-disable-line no-unused-va
     const lowestBuyExchangeDetails = EXCHANGES[details.lowestBuy.exchange];
     let tableColor = 'table-danger';
     let summary = 'Summary: No arbitrage';
-    if (details.highestSell.price > details.lowestBuy.price) {
-      const differencePercentage = (details.highestSell.price - details.lowestBuy.price) / details.lowestBuy.price * 100;
-      const totalFee = highestSellExchangeDetails.fee + lowestBuyExchangeDetails.fee;
-      const profitPercentage = differencePercentage - totalFee;
-      const minSize = Math.min(details.highestSell.size, details.lowestBuy.size);
-      const profit = profitPercentage * minSize / 100;
-      let withdrawalFee = SYMBOLS[symbol][details.lowestBuy.exchange];
-      let isWithdrawPossible = true;
-      if (withdrawalFee === -1) {
-        withdrawalFee = 0;
-        isWithdrawPossible = false;
-      } else {
-        withdrawalFee *= details.lowestBuy.price;
-      }
-      const profitAfterWithdrawalFee = profit - withdrawalFee;
+    if (details.arbitrage.state > 0) {
       tableColor = 'table-warning';
-      summary = `Summary: Possible arbitrage with ${differencePercentage.toFixed(2)}% difference and ${profitPercentage.toFixed(2)}% profit`;
-      if (profit > 0) {
+      summary = `Summary: Possible arbitrage with ${details.arbitrage.differencePercentage.toFixed(2)}% difference and ${details.arbitrage.profitPercentage.toFixed(2)}% profit`;
+      if (details.arbitrage.state > 1) {
         tableColor = 'table-primary';
-        summary += `<br>${profit.toFixed(2)} profit from size ${minSize.toFixed(2)}`;
-        if (!isWithdrawPossible) {
+        summary += `<br>${details.arbitrage.profit.toFixed(2)} profit from size ${details.arbitrage.minSize.toFixed(2)}`;
+        if (!details.arbitrage.isWithdrawPossible) {
           summary += '<br>Withdrawal not possible';
         }
       }
-      if (profitAfterWithdrawalFee > 0 && isWithdrawPossible) {
+      if (details.arbitrage.state === 3) {
         tableColor = 'table-success';
-        summary += `<br>Profit after withdrawal fee: ${profitAfterWithdrawalFee.toFixed(2)} with withdrawal fee: ${withdrawalFee.toFixed(2)}`;
+        summary += `<br>Profit after withdrawal fee: ${details.arbitrage.profitAfterWithdrawalFee.toFixed(2)} with withdrawal fee: ${details.arbitrage.withdrawalFee.toFixed(2)}`;
       }
     }
     const trSummary = createElement('tr', '', tableColor);

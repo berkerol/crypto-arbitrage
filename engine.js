@@ -59,6 +59,9 @@ async function list (symbol) {
       exchange: '',
       price: 100000000,
       size: 0
+    },
+    arbitrage: {
+      state: 0 // 0: no arbitrage, 1: positive arbitrage, 2: positive profit, 3: positive profit with withdrawal
     }
   };
   for (const exchange of Object.keys(SYMBOLS[symbol])) {
@@ -79,7 +82,40 @@ async function list (symbol) {
       }
     }
   }
+  if (result.highestSell.price > result.lowestBuy.price) {
+    result.arbitrage.state = 1;
+    result.arbitrage.differencePercentage = (result.highestSell.price - result.lowestBuy.price) / result.lowestBuy.price * 100;
+    const totalFee = EXCHANGES[result.highestSell.exchange].fee + EXCHANGES[result.lowestBuy.exchange].fee;
+    result.arbitrage.profitPercentage = result.arbitrage.differencePercentage - totalFee;
+    result.arbitrage.minSize = Math.min(result.highestSell.size, result.lowestBuy.size);
+    result.arbitrage.profit = result.arbitrage.profitPercentage * result.arbitrage.minSize / 100;
+    if (result.arbitrage.profit > 0) {
+      result.arbitrage.state = 2;
+      result.arbitrage.withdrawalFee = SYMBOLS[symbol][result.lowestBuy.exchange] * result.lowestBuy.price;
+      result.arbitrage.isWithdrawPossible = true;
+      if (result.arbitrage.withdrawalFee < 0) {
+        result.arbitrage.withdrawalFee = 0;
+        result.arbitrage.isWithdrawPossible = false;
+      }
+      result.arbitrage.profitAfterWithdrawalFee = result.arbitrage.profit - result.arbitrage.withdrawalFee;
+      if (result.arbitrage.profitAfterWithdrawalFee > 0 && result.arbitrage.isWithdrawPossible) {
+        result.arbitrage.state = 3;
+      }
+    }
+  }
   print(symbol, 'Summary', result);
+}
+
+function calculateProfit (exchangeDetails, type, intermediate, coin, method, final, minSize, instructions) {
+  if (isFinite(final)) {
+    const difference = final - 1;
+    const differencePercentage = difference * 100;
+    const profitPercentage = differencePercentage - 3 * exchangeDetails.fee;
+    const profit = profitPercentage * minSize / 100;
+    if (profit > 0) {
+      printTriangularArbitrage(exchangeDetails, type, intermediate, coin, method, differencePercentage, profitPercentage, profit, minSize, instructions);
+    }
+  }
 }
 
 async function listTriangularArbitrage (exchange, isIntermediateCoin, base, intm, symbols) {
@@ -114,7 +150,7 @@ async function listTriangularArbitrage (exchange, isIntermediateCoin, base, intm
         instructions1 += !isIntermediateCoin
           ? `Buy ${base} with ${intm} from price ${baseIntmAskPrice}`
           : `Sell ${intm} for ${base} from price ${intmBaseBidPrice}`;
-        printTriangularArbitrage(exchange, !isIntermediateCoin ? 'currency' : 'intermediate coin', intm, trgt, 'method1', final1, size1, instructions1);
+        calculateProfit(exchange, !isIntermediateCoin ? 'currency' : 'intermediate coin', intm, trgt, 'method1', final1, size1, instructions1);
         let final2 = !isIntermediateCoin // Start with 1 USDT
           ? 1 * baseIntmBidPrice // Sell USDT for TRY
           : 1 / intmBaseAskPrice; // Buy BNB with USDT
@@ -134,7 +170,7 @@ async function listTriangularArbitrage (exchange, isIntermediateCoin, base, intm
           ? `Sell ${base} for ${intm} from price ${baseIntmBidPrice}`
           : `Buy ${intm} with ${base} from price ${intmBaseAskPrice}`;
         instructions2 += `<br>Buy ${trgt} with ${intm} from price ${trgtIntmAskPrice}<br>Sell ${trgt} for ${base} from price ${trgtBaseBidPrice}`;
-        printTriangularArbitrage(exchange, !isIntermediateCoin ? 'currency' : 'intermediate coin', intm, trgt, 'method2', final2, size2, instructions2);
+        calculateProfit(exchange, !isIntermediateCoin ? 'currency' : 'intermediate coin', intm, trgt, 'method2', final2, size2, instructions2);
       }
     }
   }
