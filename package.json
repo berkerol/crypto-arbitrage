@@ -1,0 +1,24 @@
+{
+  "name": "crypto-arbitrage",
+  "version": "1.0.0",
+  "description": "List all crypto arbitrage opportunities",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/berkerol/crypto-arbitrage.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/berkerol/crypto-arbitrage/issues"
+  },
+  "homepage": "https://github.com/berkerol/crypto-arbitrage#readme",
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}

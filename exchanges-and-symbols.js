@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 // BIDS: buyers, green, highest to lowest
 // ASKS: sellers, red, lowest to highest
 const EXCHANGES = {
@@ -510,3 +509,5 @@ const SYMBOL_GROUPS = {
   stablecoins: ['USDC-USDT', 'USDE-USDT', 'DAI-USDT', 'FDUSD-USDT', 'USDD-USDT', 'PYUSD-USDT', 'TUSD-USDT', 'EURT-USDT'],
   goldCoins: ['XAUT-USDT', 'PAXG-USDT']
 };
+
+export { EXCHANGES, SYMBOLS, SYMBOL_GROUPS };
