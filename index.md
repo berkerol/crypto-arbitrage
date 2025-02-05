@@ -12,7 +12,7 @@ There are 2 modes.
 There are 2 ways to use it.
 
 * `crypto-arbitrage.js`: Web page to view the results in the browser (button above)
-* `app.js`: Node.js project that prints the results to the console
+* `app.js`: Node.js project that prints the results to the console and sends Telegram messages
 
 `engine.js` and `exchanges-and-symbols.js` are used by both `crypto-arbitrage.js` (web page) and `app.js` (Node.js).
 
