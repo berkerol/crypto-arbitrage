@@ -2,6 +2,9 @@ on:
   push:
   schedule:
     - cron: "7,27,47 * * * *"
+env:
+  TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+  TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 jobs:
   run:
     runs-on: ubuntu-22.04
