@@ -1,0 +1,16 @@
+on:
+  push:
+  schedule:
+    - cron: "7,27,47 * * * *"
+jobs:
+  run:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm i
+      - name: Run Node.js project
+        run: npm run start

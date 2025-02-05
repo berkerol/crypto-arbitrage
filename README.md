@@ -47,6 +47,10 @@ $ npm run start # or node app.js
 
 It is setup using GitHub Actions in `.github/workflows/lint.yml`
 
+## GitHub Actions Scheduled Workflow
+
+Node.js project is scheduled to run every 20 minutes using GitHub Actions in `.github/workflows/schedule.yaml`
+
 ## Contribution
 
 Feel free to [contribute](https://github.com/berkerol/crypto-arbitrage/issues) according to the [semistandard rules](https://github.com/Flet/semistandard) and [latest ECMAScript Specification](https://www.ecma-international.org/ecma-262).
