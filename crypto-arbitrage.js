@@ -29,13 +29,13 @@ if (mode === 'triangular') {
   }
 }
 
-function printTriangularArbitrage (exchangeDetails, type, intermediate, coin, method, differencePercentage, profitPercentage, profit, minSize) {
+function printTriangularArbitrage (exchangeDetails, type, intermediate, coin, method, differencePercentage, profitPercentage, profit, minSize, instructions) {
   if (exchangeDetails === 'started') {
     document.getElementById('searching').innerHTML = 'Searching';
   } else if (exchangeDetails === 'finished') {
     document.getElementById('searching').innerHTML = '';
   } else {
-    const summary = `Profit found with exchange ${exchangeDetails.displayName} and ${type} ${intermediate} using coin ${coin} and ${method}<br>${differencePercentage.toFixed(2)}% difference and ${profitPercentage.toFixed(2)}% profit<br>${profit.toFixed(2)} profit from size ${minSize.toFixed(2)}`;
+    const summary = `Profit found with exchange ${exchangeDetails.displayName} and ${type} ${intermediate} using coin ${coin} and ${method}<br>${differencePercentage.toFixed(2)}% difference and ${profitPercentage.toFixed(2)}% profit<br>${profit.toFixed(2)} profit from size ${minSize.toFixed(2)}<br>${instructions}`;
     createAlert('success', summary);
   }
 }

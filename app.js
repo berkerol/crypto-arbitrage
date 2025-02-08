@@ -9,13 +9,13 @@ async function sendTelegramMessage (message) {
   return (await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`, { method: 'POST', body: JSON.stringify({ chat_id: process.env.TELEGRAM_CHAT_ID, text: message }), headers: { 'Content-Type': 'application/json' } })).json();
 }
 
-async function printTriangularArbitrage (exchangeDetails, type, intermediate, coin, method, differencePercentage, profitPercentage, profit, minSize) {
+async function printTriangularArbitrage (exchangeDetails, type, intermediate, coin, method, differencePercentage, profitPercentage, profit, minSize, instructions) {
   if (exchangeDetails === 'started') {
     console.log('started');
   } else if (exchangeDetails === 'finished') {
     console.log('finished');
   } else {
-    const summary = `Profit found with exchange ${exchangeDetails.displayName} and ${type} ${intermediate} using coin ${coin} and ${method}\n${differencePercentage.toFixed(2)}% difference and ${profitPercentage.toFixed(2)}% profit\n${profit.toFixed(2)} profit from size ${minSize.toFixed(2)}`;
+    const summary = `Profit found with exchange ${exchangeDetails.displayName} and ${type} ${intermediate} using coin ${coin} and ${method}\n${differencePercentage.toFixed(2)}% difference and ${profitPercentage.toFixed(2)}% profit\n${profit.toFixed(2)} profit from size ${minSize.toFixed(2)}\n${instructions.replaceAll('<br>', '\n')}`;
     console.log(summary);
     await sendTelegramMessage(summary);
   }
