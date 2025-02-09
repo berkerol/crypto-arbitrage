@@ -155,12 +155,19 @@ async function listTriangularArbitrage (printTriangularArbitrage, fetch, exchang
         final1 = !isIntermediateCoin
           ? final1 / baseIntmAskPrice // Buy USDT with TRY
           : final1 * intmBaseBidPrice; // Sell BNB for USDT
+        let size1 = !isIntermediateCoin
+          ? baseIntmAskSize
+          : intmBaseBidSize * intmBaseBidPrice;
+        const size1LastPart = !isIntermediateCoin
+          ? 1 / baseIntmBidPrice
+          : 1 * intmBaseBidPrice;
+        size1 = Math.min(Math.min(trgtBaseAskSize * trgtBaseAskPrice, trgtIntmBidSize * trgtIntmBidPrice * size1LastPart, size1));
         let instructions1 = `Buy ${trgt} with ${base} from price ${trgtBaseAskPrice}<br>Sell ${trgt} for ${intm} from price ${trgtIntmBidPrice}<br>`;
         instructions1 += !isIntermediateCoin
           ? `Buy ${base} with ${intm} from price ${baseIntmAskPrice}`
           : `Sell ${intm} for ${base} from price ${intmBaseBidPrice}`;
         const minSize1 = Math.min(trgtBaseAskSize, trgtIntmBidSize, (!isIntermediateCoin ? baseIntmAskSize : intmBaseBidSize));
-        await calculateProfit(printTriangularArbitrage, exchange, !isIntermediateCoin ? 'currency' : 'intermediate coin', intm, trgt, 'method1', final1, minSize1, instructions1);
+        await calculateProfit(printTriangularArbitrage, exchange, !isIntermediateCoin ? 'currency' : 'intermediate coin', intm, trgt, 'method1', final1, size1, instructions1);
         let final2 = !isIntermediateCoin // Start with 1 USDT
           ? 1 * baseIntmBidPrice // Sell USDT for TRY
           : 1 / intmBaseAskPrice; // Buy BNB with USDT
@@ -169,12 +176,19 @@ async function listTriangularArbitrage (printTriangularArbitrage, fetch, exchang
           / trgtIntmAskPrice // Buy COIN with TRY/BNB
         // eslint-disable-next-line operator-linebreak
           * trgtBaseBidPrice; // Sell COIN for USDT
+        let size2 = !isIntermediateCoin
+          ? baseIntmBidSize
+          : intmBaseAskSize * intmBaseAskPrice;
+        const size2LastPart = !isIntermediateCoin
+          ? 1 / baseIntmAskPrice
+          : 1 * intmBaseAskPrice;
+        size2 = Math.min(Math.min(size2, trgtIntmAskSize * trgtIntmAskPrice * size2LastPart), trgtBaseBidSize * trgtBaseBidPrice);
         let instructions2 = !isIntermediateCoin
           ? `Sell ${base} for ${intm} from price ${baseIntmBidPrice}`
           : `Buy ${intm} with ${base} from price ${intmBaseAskPrice}`;
         instructions2 += `<br>Buy ${trgt} with ${intm} from price ${trgtIntmAskPrice}<br>Sell ${trgt} for ${base} from price ${trgtBaseBidPrice}`;
         const minSize2 = Math.min((!isIntermediateCoin ? baseIntmBidSize : intmBaseAskSize), trgtIntmAskSize, trgtBaseBidSize);
-        await calculateProfit(printTriangularArbitrage, exchange, !isIntermediateCoin ? 'currency' : 'intermediate coin', intm, trgt, 'method2', final2, minSize2, instructions2);
+        await calculateProfit(printTriangularArbitrage, exchange, !isIntermediateCoin ? 'currency' : 'intermediate coin', intm, trgt, 'method2', final2, size2, instructions2);
       }
     }
   }
