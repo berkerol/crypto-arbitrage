@@ -56,6 +56,15 @@ async function getSymbolsFromExchange (fetch, exchangeDetails) {
     if (exchangeDetails.displayName === 'Gate.io') {
       return res.filter(symbol => symbol.trade_status === 'tradable');
     }
+    if (exchangeDetails.displayName === 'MEXC') {
+      return res.filter(symbol => symbol.status === '1' && symbol.isSpotTradingAllowed === true);
+    }
+    if (exchangeDetails.displayName === 'BitMart') {
+      return res.filter(symbol => symbol.trade_status === 'trading');
+    }
+    if (exchangeDetails.displayName === 'WhiteBIT') {
+      return res.filter(symbol => symbol.tradesEnabled === true && symbol.type === 'spot');
+    }
     return res;
   } catch (error) {
     console.error(`Fetch error with all symbols and ${exchangeDetails.displayName}:`, error);

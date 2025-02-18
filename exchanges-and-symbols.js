@@ -321,6 +321,105 @@ const EXCHANGES = {
       return symbol.split('-').join('_');
     },
     fee: 0.2
+  },
+  mexc: {
+    faviconUrl: 'https://www.mexc.com/sites/favicon.ico',
+    displayName: 'MEXC',
+    webTradeUrl: 'https://www.mexc.com/exchange/',
+    getWebTradeSymbol: function (symbol) {
+      return symbol.split('-').join('_');
+    },
+    apiUrl: 'https://api.mexc.com',
+    apiOrderBookTicker: {
+      url: '/api/v3/ticker/bookTicker?symbol=',
+      bidPricePath: 'bidPrice',
+      bidSizePath: 'bidQty',
+      askPricePath: 'askPrice',
+      askSizePath: 'askQty'
+    },
+    apiOrderBook: {
+      url: '/api/v3/depth?symbol=',
+      bidPricePath: 'bids.0.0',
+      bidSizePath: 'bids.0.1',
+      askPricePath: 'asks.0.0',
+      askSizePath: 'asks.0.1'
+    },
+    apiSymbols: {
+      url: '/api/v3/exchangeInfo',
+      symbolsPath: 'symbols',
+      currencies: ['EUR'],
+      intermediateCoins: ['USDC', 'TUSD', 'BTC', 'ETH'],
+      baseAsset: 'baseAsset',
+      quoteAsset: 'quoteAsset'
+    },
+    getApiOrderBookSymbol: function (symbol) {
+      return symbol.split('-').join('');
+    },
+    fee: 0.05
+  },
+  bitmart: {
+    faviconUrl: 'https://www.bitmart.com/favicon.ico',
+    displayName: 'BitMart',
+    webTradeUrl: 'https://www.bitmart.com/trade/en-US?symbol=',
+    getWebTradeSymbol: function (symbol) {
+      return symbol.split('-').join('_');
+    },
+    apiUrl: 'https://api-cloud.bitmart.com',
+    apiOrderBookTicker: {
+      url: '/spot/quotation/v3/ticker?symbol=',
+      bidPricePath: 'data.bid_px',
+      bidSizePath: 'data.bid_sz',
+      askPricePath: 'data.ask_px',
+      askSizePath: 'data.ask_sz'
+    },
+    apiOrderBook: {
+      url: '/spot/quotation/v3/books?limit=1&symbol=',
+      bidPricePath: 'bids.0.0',
+      bidSizePath: 'bids.0.1',
+      askPricePath: 'asks.0.0',
+      askSizePath: 'asks.0.1'
+    },
+    apiSymbols: {
+      url: '/spot/v1/symbols/details',
+      symbolsPath: 'data.symbols',
+      currencies: [],
+      intermediateCoins: ['USDC', 'DAI', 'BTC', 'ETH'],
+      baseAsset: 'base_currency',
+      quoteAsset: 'quote_currency'
+    },
+    getApiOrderBookSymbol: function (symbol) {
+      return symbol.split('-').join('_');
+    },
+    fee: 0.1
+  },
+  whitebit: {
+    faviconUrl: 'https://whitebit.com/favicon.ico',
+    displayName: 'WhiteBIT',
+    webTradeUrl: 'https://whitebit.com/trade/',
+    getWebTradeSymbol: function (symbol) {
+      return symbol;
+    },
+    apiUrl: 'https://whitebit.com/api/v4/public',
+    apiOrderBook: {
+      url: '/orderbook/',
+      parameters: '?limit=1&level=2',
+      bidPricePath: 'bids.0.0',
+      bidSizePath: 'bids.0.1',
+      askPricePath: 'asks.0.0',
+      askSizePath: 'asks.0.1'
+    },
+    apiSymbols: {
+      url: '/markets',
+      symbolsPath: '',
+      currencies: ['UAH', 'EUR', 'USD', 'TRY', 'GBP', 'PLN', 'KZT'],
+      intermediateCoins: ['USDC', 'TUSD'],
+      baseAsset: 'stock',
+      quoteAsset: 'money'
+    },
+    getApiOrderBookSymbol: function (symbol) {
+      return symbol.split('-').join('_');
+    },
+    fee: 0.1
   }
 };
 
@@ -335,7 +434,10 @@ const SYMBOLS = {
     gateio: 0.005,
     bingx: 0,
     coinw: 0.019,
-    poloniex: 0.01
+    poloniex: 0.01,
+    mexc: 0.00009,
+    bitmart: 0.008,
+    whitebit: 0.0105
   },
   'ETC-USDT': {
     pionex: 0.004,
@@ -347,7 +449,10 @@ const SYMBOLS = {
     gateio: 0.0208,
     bingx: 0,
     coinw: 0.074,
-    poloniex: 0.0437
+    poloniex: 0.0437,
+    mexc: 0.01,
+    bitmart: 0.001,
+    whitebit: 0.03
   },
   'AAVE-USDT': {
     pionex: 0.079,
@@ -359,7 +464,10 @@ const SYMBOLS = {
     gateio: 0.017,
     bingx: 0,
     coinw: 0.020,
-    poloniex: 0.042
+    poloniex: 0.042,
+    mexc: 0.01,
+    bitmart: 0.02,
+    whitebit: 0.0025
   },
   'POL-USDT': {
     pionex: 0.08,
@@ -371,7 +479,10 @@ const SYMBOLS = {
     gateio: 1.13,
     bingx: 0,
     coinw: 0,
-    poloniex: 6.4
+    poloniex: 6.4,
+    mexc: 0.3,
+    bitmart: 6.8,
+    whitebit: 0.002
   },
   'VET-USDT': {
     pionex: -1,
@@ -381,7 +492,10 @@ const SYMBOLS = {
     htx: 20,
     gateio: 11.48,
     bingx: 0,
-    coinw: 100
+    coinw: 100,
+    mexc: 30,
+    bitmart: 65,
+    whitebit: 50
   },
   'FIL-USDT': {
     pionex: 0.0005,
@@ -393,7 +507,10 @@ const SYMBOLS = {
     gateio: 0.0989,
     bingx: 0,
     coinw: 0.1,
-    poloniex: 0.001
+    poloniex: 0.001,
+    mexc: 0.05,
+    bitmart: 0.01,
+    whitebit: 0.3
   },
   'ALGO-USDT': {
     pionex: 0.008,
@@ -404,20 +521,27 @@ const SYMBOLS = {
     htx: 0.01,
     gateio: 1.44,
     bingx: 0,
-    coinw: 0.5
+    coinw: 0.5,
+    mexc: 0.1,
+    bitmart: 0.2,
+    whitebit: 2.2
   },
   'CRO-USDT': {
     pionex: -1,
     bitget: 1,
     kucoin: 3,
-    gateio: 3.76
+    gateio: 3.76,
+    mexc: 1,
+    bitmart: 10
   },
   'OKB-USDT': {
     pionex: -1,
     gateio: 0.0946,
     bingx: 0,
     coinw: 0.0906,
-    poloniex: -1
+    poloniex: -1,
+    mexc: 0.03,
+    bitmart: 0.07
   },
   'USDC-USDT': {
     pionex: 0.2,
@@ -429,14 +553,18 @@ const SYMBOLS = {
     gateio: 0.5,
     bingx: 0,
     coinw: 5.34,
-    poloniex: 5
+    poloniex: 5,
+    mexc: 0,
+    bitmart: 0,
+    whitebit: 0.8
   },
   'USDE-USDT': {
     bybit: 7,
     bitget: 4,
     kucoin: 10,
     gateio: 4.28,
-    poloniex: 21.34
+    poloniex: 21.34,
+    bitmart: 3
   },
   'DAI-USDT': {
     pionex: 7.52,
@@ -446,13 +574,17 @@ const SYMBOLS = {
     gateio: 0.5,
     bingx: 0,
     coinw: 3.41,
-    poloniex: 2.02
+    poloniex: 2.02,
+    mexc: 7,
+    bitmart: 3.1,
+    whitebit: 0.59
   },
   'FDUSD-USDT': {
     binance: 0,
     bitget: 0,
     gateio: 0.5,
-    bingx: 0
+    bingx: 0,
+    mexc: 0.2
   },
   'USDD-USDT': {
     bybit: 2.6,
@@ -460,7 +592,9 @@ const SYMBOLS = {
     htx: 0.5,
     gateio: 2.02,
     coinw: 1.92,
-    poloniex: 1.5
+    poloniex: 1.5,
+    mexc: 1,
+    bitmart: 0.4
   },
   'PYUSD-USDT': {
     bybit: 4,
@@ -468,7 +602,8 @@ const SYMBOLS = {
     kucoin: 9,
     htx: 5.6348,
     gateio: 4.32,
-    bingx: 0
+    bingx: 0,
+    bitmart: 3.1
   },
   'TUSD-USDT': {
     binance: 0.7,
@@ -478,20 +613,27 @@ const SYMBOLS = {
     htx: 1,
     gateio: 2,
     bingx: 0,
-    poloniex: 2
+    poloniex: 2,
+    mexc: 1,
+    bitmart: 3.1,
+    whitebit: 0.75
   },
   'EURT-USDT': {
     htx: 5.4916,
     gateio: 4.27,
     bingx: 0,
-    coinw: 3.96
+    coinw: 3.96,
+    mexc: 1
   },
   'XAUT-USDT': {
     bitget: 0.00151849,
     htx: 0.002111,
     gateio: 0.00161,
     bingx: 0,
-    coinw: 0.000954
+    coinw: 0.000954,
+    mexc: 0.00093,
+    bitmart: 0.002,
+    whitebit: 0.0002
   },
   'PAXG-USDT': {
     pionex: -1,
@@ -500,7 +642,8 @@ const SYMBOLS = {
     bitget: 0.00149926,
     kucoin: 0.006,
     bingx: 0,
-    coinw: 0.001797
+    coinw: 0.001797,
+    mexc: 0.00162537
   }
 };
 
