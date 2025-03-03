@@ -1,5 +1,10 @@
 on:
   push:
+    paths:
+      - 'app.js'
+      - 'crypto-arbitrage.js'
+      - 'engine.js'
+      - 'exchanges-and-symbols.js'
   schedule:
     - cron: "7,27,47 * * * *"
 env:
@@ -7,12 +12,12 @@ env:
   TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 jobs:
   run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
       - name: Install dependencies
         run: npm i
       - name: Run Node.js project
