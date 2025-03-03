@@ -1,6 +1,6 @@
 import { EXCHANGES, SYMBOLS } from './exchanges-and-symbols.js';
 
-const PROFIT_THRESHOLD = 0.01;
+const PROFIT_THRESHOLD = 0.1;
 
 async function sendRequest (fetch, url) {
   return (await fetch(url, { headers: { Origin: 'https://berkerol.github.io' } })).json();
